@@ -9,7 +9,7 @@ import Map from './pages/Map';
 import Discover from './pages/Discover';
 import Schedules from './pages/Schedules';
 import Onboarding from './pages/Onboarding';
-import ProtectedRoute from './components/auth/ProtectedRoute';
+// import ProtectedRoute from './components/auth/ProtectedRoute';
 
 function App() {
   return (
