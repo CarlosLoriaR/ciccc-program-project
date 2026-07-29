@@ -1,4 +1,4 @@
-import { INTEREST_OPTIONS } from '../constants/interests';
+import { INTEREST_OPTIONS } from '../../constants/interests';
 
 const MAX_INTERESTS = 5;
 
