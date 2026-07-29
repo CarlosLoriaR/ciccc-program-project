@@ -2,13 +2,14 @@ import { useAuth } from '../context/auth/useAuth';
 import { FiStar, FiLogOut } from 'react-icons/fi';
 import { FaEnvelope } from 'react-icons/fa';
 import { BsFileEarmarkTextFill } from 'react-icons/bs';
+import { IoCarSport } from 'react-icons/io5';
 
 const Profile = () => {
   const { user, logout } = useAuth();
   if (!user) return null;
 
   return (
-    <div className="p-4 max-w-md mx-auto space-y-6">
+    <div className="p-4 max-w-md mx-auto space-y-6 md:max-w-3xl">
       <div className="flex flex-col items-center text-center">
         <div className="relative">
           <img
@@ -25,10 +26,13 @@ const Profile = () => {
       {/* Stats */}
       <div className="grid grid-cols-2 gap-3">
         <div className="bg-white border border-outline-variant rounded-xl p-4 text-center">
-          <p className="text-2xl font-bold text-primary">
+          <p className="text-2xl font-bold text-primary flex items-center justify-center gap-1">
+            <IoCarSport size={22} className="fill-primary" />
             {user.total_rides ?? 0}
           </p>
-          <p className="text-xs text-on-surface-variant mt-1">Viajes</p>
+          <p className="text-xs text-on-surface-variant mt-1 font-semibold">
+            Rides
+          </p>
         </div>
 
         <div className="bg-white border border-outline-variant rounded-xl p-4 text-center">
@@ -36,7 +40,9 @@ const Profile = () => {
             <FiStar size={18} className="fill-primary" />
             {user.rating_avg}
           </p>
-          <p className="text-xs text-on-surface-variant mt-1">Rating</p>
+          <p className="text-xs text-on-surface-variant mt-1 font-semibold">
+            Rating
+          </p>
         </div>
       </div>
 
@@ -47,7 +53,7 @@ const Profile = () => {
         </p>
         <div className="bg-white border border-outline-variant rounded-xl divide-y divide-outline-variant">
           <div className="flex items-start gap-3 p-4">
-            <FaEnvelope />
+            <FaEnvelope className="fill-primary" />
             <div>
               <p className="text-xs text-on-surface-variant">Email</p>
               <p className="text-on-surface font-medium">{user.email}</p>
@@ -88,7 +94,7 @@ const Profile = () => {
       {/* Logout */}
       <button
         onClick={logout}
-        className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl border border-error text-error font-semibold hover:bg-error hover:text-on-error transition-colors"
+        className="w-full flex items-center justify-center gap-2 py-3.5 rounded-full border border-error text-error font-semibold hover:bg-error hover:text-on-error transition-colors"
       >
         <FiLogOut size={18} />
         Log Out
