@@ -6,34 +6,56 @@ import type { UpdateProfileData } from './AuthContext';
 import api from '../../lib/api';
 import toast from 'react-hot-toast';
 
-const AuthContextProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [token, setToken] = useState<string | null>(
-    localStorage.getItem('token'),
-  );
+// ⚠️ TEMPORAL: mock para probar pantallas sin backend. Sacar cuando conectemos la API real.
+const MOCK_USER: User = {
+  _id: '1',
+  email: 'jane@example.com',
+  full_name: 'Jane Doe',
+  display_name: 'Jane',
+  avatar_url:
+    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSmIUHezoShRZ9jroRwTSttj52ou3HpCmXi-wSVSFoBaQ&s=10',
+  home_location: { type: 'Point', coordinates: [0, 0] },
+  work_location: { type: 'Point', coordinates: [0, 0] },
+  preferred_modes: [],
+  rating_avg: 4.9,
+  rating_count: 50,
+  role: 'user',
+  status: 'active',
+  created_at: '',
+  updated_at: '',
+  bio: 'Entusiasta del carpooling y amante de la tecnología.',
+  interests: ['Coding', 'Music', 'Travel', 'Movies'],
+  total_rides: 42,
+};
 
-  const [isLoading, setIsLoading] = useState(true);
+const AuthContextProvider = ({ children }: { children: ReactNode }) => {
+  // MOCK, RECUERDA CAMBIAR A (null) DESPUÉS
+  const [user, setUser] = useState<User | null>(MOCK_USER);
+  // MOCK, RECUERDA CAMBIAR A (localStorage.getItem('token')) DESPUÉS
+  const [token, setToken] = useState<string | null>('mock-tocken');
+
+  // MOCK, RECUERDA CAMBIAR A TRUE DESPUÉS
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    if (!token) {
-      setIsLoading(false);
-      return;
-    }
-
-    const fetchUser = async () => {
-      try {
-        const res = await api.get<User>('auth/me');
-        setUser(res.data);
-      } catch (error) {
-        console.error(error);
-        localStorage.removeItem('token');
-        setToken(null);
-        setUser(null);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchUser();
+    //   if (!token) {
+    //     setIsLoading(false);
+    //     return;
+    //   }
+    //   const fetchUser = async () => {
+    //     try {
+    //       const res = await api.get<User>('auth/me');
+    //       setUser(res.data);
+    //     } catch (error) {
+    //       console.error(error);
+    //       localStorage.removeItem('token');
+    //       setToken(null);
+    //       setUser(null);
+    //     } finally {
+    //       setIsLoading(false);
+    //     }
+    //   };
+    //   fetchUser();
   }, [token]);
 
   const login = async (email: string, password: string) => {
