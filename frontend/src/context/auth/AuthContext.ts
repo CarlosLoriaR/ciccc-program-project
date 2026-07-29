@@ -7,6 +7,7 @@ export type UpdateProfileData = {
   bio?: string;
   interests?: string[];
   avatar_url?: string;
+  photos?: string[];
 };
 
 type AuthContextType = {

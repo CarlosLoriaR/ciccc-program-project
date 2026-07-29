@@ -100,7 +100,7 @@ const Profile = () => {
         <FiLogOut size={18} />
         Log Out
       </button>
-      {/* <CompleteProfileModal /> */}
+      <CompleteProfileModal />
     </div>
   );
 };

@@ -3,6 +3,7 @@ import InterestSelector from './InterestSelector';
 import { useAuth } from '../../context/auth/useAuth';
 import React, { useState } from 'react';
 import toast from 'react-hot-toast';
+import PhotoGalleryUpload from './PhotoGalleryUpload';
 
 const DISMISS_KEY = 'profileReminderDismissed';
 
@@ -15,6 +16,7 @@ const CompleteProfileModal = ({ onClose }: CompleteProfileModalProps) => {
   const [bio, setBio] = useState(user?.bio ?? '');
   const [interests, setInterests] = useState<string[]>(user?.interests ?? []);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [photos, setPhotos] = useState<string[]>(user?.photos ?? []);
 
   const handleDismiss = () => {
     sessionStorage.setItem(DISMISS_KEY, 'true');
@@ -26,7 +28,7 @@ const CompleteProfileModal = ({ onClose }: CompleteProfileModalProps) => {
     setIsSubmitting(true);
 
     try {
-      await updateProfile({ bio, interests });
+      await updateProfile({ bio, interests, photos });
       toast.success('Profile updated!');
       onClose();
     } catch (error) {
@@ -56,6 +58,11 @@ const CompleteProfileModal = ({ onClose }: CompleteProfileModalProps) => {
         </div>
 
         <form className="space-y-5" onSubmit={handleSubmit}>
+          <div>
+            <label className="">Extra Photos</label>
+            <PhotoGalleryUpload photos={photos} onChange={setPhotos} />
+          </div>
+
           <div>
             <label className="block text-sm font-semibold text-on-surface mb-2">
               Bio
