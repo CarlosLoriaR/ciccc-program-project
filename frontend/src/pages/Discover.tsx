@@ -11,7 +11,7 @@ const mockUser: User = {
     'https://img.magnific.com/foto-gratis/estilo-vida-emociones-gente-concepto-casual-confiado-agradable-sonriente-mujer-asiatica-brazos-cruzados-pecho-seguro-listo-ayudar-escuchando-companeros-trabajo-participando-conversacion_1258-59335.jpg?semt=ais_hybrid&w=740&q=80',
   home_location: { type: 'Point', coordinates: [0, 0] },
   work_location: { type: 'Point', coordinates: [0, 0] },
-  preferred_modes: [],
+  preferred_modes: ['car', 'bus', 'train'],
   rating_avg: 4.8, // para que dispare el badge "Top Commuter"
   rating_count: 20,
   role: 'user',
