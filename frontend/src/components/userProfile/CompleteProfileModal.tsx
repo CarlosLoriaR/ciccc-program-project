@@ -1,14 +1,46 @@
 import { FiX } from 'react-icons/fi';
 import InterestSelector from './InterestSelector';
+import { useAuth } from '../../context/auth/useAuth';
+import React, { useState } from 'react';
+import toast from 'react-hot-toast';
 
 const DISMISS_KEY = 'profileReminderDismissed';
 
-const CompleteProfileModal = () => {
+type CompleteProfileModalProps = {
+  onClose: () => void;
+};
+
+const CompleteProfileModal = ({ onClose }: CompleteProfileModalProps) => {
+  const { user, updateProfile } = useAuth();
+  const [bio, setBio] = useState(user?.bio ?? '');
+  const [interests, setInterests] = useState<string[]>(user?.interests ?? []);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleDismiss = () => {
+    sessionStorage.setItem(DISMISS_KEY, 'true');
+    onClose();
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    try {
+      await updateProfile({ bio, interests });
+      toast.success('Profile updated!');
+      onClose();
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-on-surface/40 backdrop-blur-sm px-4">
       <div className=" relative w-full max-w-md md:max-w-3xl bg-white rounded-3xl shadow-xl p-8">
         <button
-          onClick={}
+          onClick={handleDismiss}
           className="absolute top-5 right-5 text-on-surface-variant hover:text-primary transition-colors"
         >
           <FiX size={22} />
@@ -19,27 +51,11 @@ const CompleteProfileModal = () => {
             Complete your profile
           </h1>
           <p className="text-on-surface-variant mt-1">
-            Let others know a bit more about you.
+            Add a bio and interests so others get yo know you.
           </p>
         </div>
 
-        <div className="flex justify-center mb-6">
-          <AvatarUpload onFileSelect={(file, url) => console.log(file, url)} />
-        </div>
-
         <form className="space-y-5" onSubmit={handleSubmit}>
-          <div>
-            <label className="block text-sm font-semibold text-on-surface mb-2">
-              Display Name
-            </label>
-            <input
-              type="text"
-              value={displayName}
-              onChange={(e) => setDisplayName(e.target.value)}
-              className="w-full px-4 py-3.5 bg-surface-container-low rounded-xl text-on-surface font-medium border border-transparent focus:border-primary focus:outline-none transition-colors"
-            />
-          </div>
-
           <div>
             <label className="block text-sm font-semibold text-on-surface mb-2">
               Bio
@@ -62,17 +78,10 @@ const CompleteProfileModal = () => {
 
           <button
             type="submit"
-            className="w-full py-3.5 bg-primary text-white font-bold rounded-full hover:bg-primary-container hover:text-on-primary transition-colors"
+            disabled={isSubmitting}
+            className="w-full py-3.5 bg-primary text-white font-bold rounded-full hover:bg-primary-container hover:text-on-primary transition-colors disabled:opacity-50"
           >
-            Finish Setup
-          </button>
-
-          <button
-            type="button"
-            onClick={handleSkip}
-            className="w-full text-center text-primary hover:text-primary-container font-semibold transition-colors"
-          >
-            Skip for now
+            {isSubmitting ? 'Saving...' : 'Save'}
           </button>
         </form>
       </div>

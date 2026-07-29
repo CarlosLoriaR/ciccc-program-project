@@ -3,6 +3,7 @@ import { FiStar, FiLogOut } from 'react-icons/fi';
 import { FaEnvelope } from 'react-icons/fa';
 import { BsFileEarmarkTextFill } from 'react-icons/bs';
 import { IoCarSport } from 'react-icons/io5';
+import CompleteProfileModal from '../components/userProfile/CompleteProfileModal';
 
 const Profile = () => {
   const { user, logout } = useAuth();
@@ -99,6 +100,7 @@ const Profile = () => {
         <FiLogOut size={18} />
         Log Out
       </button>
+      {/* <CompleteProfileModal /> */}
     </div>
   );
 };
