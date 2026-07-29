@@ -100,14 +100,14 @@ const ProfileCard = ({
       <div className="p-4 flex gap-3 md:gap-20 justify-center">
         <button
           onClick={onSkip}
-          className="flex-1 md:flex-none flex items-center justify-center gap-2 px-10 py-3 rounded-full border border-outline text-primary font-semibold "
+          className="flex-1 md:flex-none flex items-center justify-center gap-2 px-10 py-3 rounded-full border border-outline text-primary font-semibold hover:bg-error hover:text-on-error transition-colors"
         >
           <FiX size={18} />
           Skip
         </button>
         <button
           onClick={onConnect}
-          className="flex-2 md:flex-none flex items-center justify-center gap-2 px-10 py-3 rounded-full bg-primary font-semibold text-white"
+          className="flex-2 md:flex-none flex items-center justify-center gap-2 px-10 py-3 rounded-full bg-primary text-white font-bold hover:bg-primary-container hover:text-on-primary transition-colors"
         >
           <LuMessageCircleMore size={18} />
           Connect
