@@ -21,4 +21,5 @@ export type User = {
   bio?: string;
   interests?: string[];
   total_rides?: number;
+  photos?: string[];
 };
