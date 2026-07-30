@@ -90,10 +90,26 @@ const AuthContextProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  // const updateProfile = async (data: UpdateProfileData) => {
+  //   try {
+  //     const res = await api.patch<User>('/users/me', data);
+  //     setUser(res.data);
+  //   } catch (error) {
+  //     console.error(error);
+  //     toast.error('Could not update profile. Please try again.');
+  //     throw error;
+  //   }
+  // };
+
+  // ⚠️ TEMPORAL: mientras no hay backend, actualizamos el user localmente en vez de llamar a la API real.
   const updateProfile = async (data: UpdateProfileData) => {
     try {
-      const res = await api.patch<User>('/users/me', data);
-      setUser(res.data);
+      // Cuando el backend esté listo, descomentar la llamada real y borrar estas 2 líneas.
+      setUser((prev) => (prev ? { ...prev, ...data } : prev));
+      return;
+
+      // const res = await api.patch<User>('/users/me', data);
+      // setUser(res.data);
     } catch (error) {
       console.error(error);
       toast.error('Could not update profile. Please try again.');

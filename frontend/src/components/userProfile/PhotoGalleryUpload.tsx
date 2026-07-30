@@ -31,7 +31,7 @@ const PhotoGalleryUpload = ({ photos, onChange }: PhotoGalleryUploadProps) => {
     <div>
       <div className="grid grid-cols-3 gap-3">
         {photos.map((photo, index) => (
-          <div>
+          <div key={index} className="relative aspect-square">
             <img
               src={photo}
               alt={`Photo ${index + 1}`}
@@ -41,7 +41,6 @@ const PhotoGalleryUpload = ({ photos, onChange }: PhotoGalleryUploadProps) => {
               type="button"
               onClick={() => removePhoto(index)}
               className="absolute -top-2 -right-2 bg-error text-on-error rounded-full p-1 hover:opacity-90 transition-opacity"
-              aria-label="Remove photo"
             >
               <FiX size={14} />
             </button>

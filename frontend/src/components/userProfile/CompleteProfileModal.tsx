@@ -17,6 +17,7 @@ const CompleteProfileModal = ({ onClose }: CompleteProfileModalProps) => {
   const [interests, setInterests] = useState<string[]>(user?.interests ?? []);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [photos, setPhotos] = useState<string[]>(user?.photos ?? []);
+  const [displayName, setDisplayName] = useState(user?.display_name ?? '');
 
   const handleDismiss = () => {
     sessionStorage.setItem(DISMISS_KEY, 'true');
@@ -28,7 +29,12 @@ const CompleteProfileModal = ({ onClose }: CompleteProfileModalProps) => {
     setIsSubmitting(true);
 
     try {
-      await updateProfile({ bio, interests, photos });
+      await updateProfile({
+        bio,
+        interests,
+        photos,
+        display_name: displayName,
+      });
       toast.success('Profile updated!');
       onClose();
     } catch (error) {
@@ -67,6 +73,19 @@ const CompleteProfileModal = ({ onClose }: CompleteProfileModalProps) => {
           <div>
             <label className="">Extra Photos</label>
             <PhotoGalleryUpload photos={photos} onChange={setPhotos} />
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-on-surface mb-2">
+              Display Name
+            </label>
+            <input
+              type="text"
+              placeholder="Choose your name for others"
+              value={displayName}
+              onChange={(e) => setDisplayName(e.target.value)}
+              className="w-full px-4 py-3.5 bg-surface-container-low rounded-xl text-on-surface font-medium border border-transparent focus:border-primary focus:outline-none transition-colors placeholder:text-outline placeholder:font-normal"
+            />
           </div>
 
           <div>
