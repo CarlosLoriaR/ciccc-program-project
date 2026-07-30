@@ -52,7 +52,7 @@ const PhotoGalleryUpload = ({ photos, onChange }: PhotoGalleryUploadProps) => {
           <button
             type="button"
             onClick={() => fileInputRef.current?.click()}
-            className="aspect-square rounded-xl border-2 border-dashed border-outline-variant flex items-center justify-center text-on-surface-variant hover:border-primary hover:text-primary transition-colors"
+            className="aspect-square rounded-xl border-2 border-dashed border-outline-variant flex items-center justify-center text-on-surface-variant hover:border-secondary hover:text-primary transition-colors"
           >
             <FiPlus />
           </button>

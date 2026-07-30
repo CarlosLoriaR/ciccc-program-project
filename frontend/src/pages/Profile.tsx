@@ -1,12 +1,12 @@
 import { useAuth } from '../context/auth/useAuth';
 import { FiStar, FiLogOut } from 'react-icons/fi';
-import { FaEnvelope } from 'react-icons/fa';
+import { FaEnvelope, FaUser } from 'react-icons/fa';
 import { BsFileEarmarkTextFill } from 'react-icons/bs';
 import { IoCarSport } from 'react-icons/io5';
-import CompleteProfileModal from '../components/userProfile/CompleteProfileModal';
 
 const Profile = () => {
   const { user, logout } = useAuth();
+
   if (!user) return null;
 
   return (
@@ -20,7 +20,7 @@ const Profile = () => {
           />
         </div>
         <h2 className="text-xl font-bold text-on-surface mt-3">
-          {user.display_name || user.full_name}
+          {user.full_name}
         </h2>
       </div>
 
@@ -28,7 +28,7 @@ const Profile = () => {
       <div className="grid grid-cols-2 gap-3">
         <div className="bg-white border border-outline-variant rounded-xl p-4 text-center">
           <p className="text-2xl font-bold text-primary flex items-center justify-center gap-1">
-            <IoCarSport size={22} className="fill-primary" />
+            <IoCarSport size={22} className="fill-primary mt-0.5" />
             {user.total_rides ?? 0}
           </p>
           <p className="text-xs text-on-surface-variant mt-1 font-semibold">
@@ -38,7 +38,7 @@ const Profile = () => {
 
         <div className="bg-white border border-outline-variant rounded-xl p-4 text-center">
           <p className="text-2xl font-bold text-primary flex items-center justify-center gap-1">
-            <FiStar size={18} className="fill-primary" />
+            <FiStar size={18} className="fill-primary mt-0.5" />
             {user.rating_avg}
           </p>
           <p className="text-xs text-on-surface-variant mt-1 font-semibold">
@@ -47,6 +47,25 @@ const Profile = () => {
         </div>
       </div>
 
+      {/* Photos */}
+      {user.photos && user.photos.length > 0 && (
+        <div>
+          <p className="text-xs font-bold text-on-surface-variant tracking-wide mb-2">
+            PHOTOS
+          </p>
+          <div className="grid grid-cols-3 gap-3">
+            {user.photos.map((photo, index) => (
+              <img
+                key={index}
+                src={photo}
+                alt={`Photo${index + 1}`}
+                className="w-full aspect-square object-cover rounded-xl"
+              />
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Personal Info */}
       <div>
         <p className="text-xs font-bold text-on-surface-variant tracking-wide mb-2">
@@ -54,7 +73,15 @@ const Profile = () => {
         </p>
         <div className="bg-white border border-outline-variant rounded-xl divide-y divide-outline-variant">
           <div className="flex items-start gap-3 p-4">
-            <FaEnvelope className="fill-primary" />
+            <FaUser size={16} className="fill-primary mt-0.5" />
+            <div>
+              <p className="text-xs text-on-surface-variant">Display Name</p>
+              <p className="text-on-surface font-medium">{user.display_name}</p>
+            </div>
+          </div>
+
+          <div className="flex items-start gap-3 p-4">
+            <FaEnvelope className="fill-primary mt-0.5" />
             <div>
               <p className="text-xs text-on-surface-variant">Email</p>
               <p className="text-on-surface font-medium">{user.email}</p>
@@ -62,7 +89,7 @@ const Profile = () => {
           </div>
 
           <div className="flex items-start gap-3 p-4">
-            <BsFileEarmarkTextFill size={18} className="text-primary" />
+            <BsFileEarmarkTextFill size={18} className="text-primary mt-0.5" />
             <div>
               <p className="text-xs text-on-surface-variant">Bio</p>
               <p className="text-on-surface font-medium">
@@ -100,7 +127,6 @@ const Profile = () => {
         <FiLogOut size={18} />
         Log Out
       </button>
-      <CompleteProfileModal />
     </div>
   );
 };

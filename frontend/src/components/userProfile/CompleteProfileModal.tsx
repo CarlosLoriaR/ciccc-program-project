@@ -39,8 +39,14 @@ const CompleteProfileModal = ({ onClose }: CompleteProfileModalProps) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-on-surface/40 backdrop-blur-sm px-4">
-      <div className=" relative w-full max-w-md md:max-w-3xl bg-white rounded-3xl shadow-xl p-8">
+    <div
+      className="fixed inset-0 z-50 flex items-start justify-center bg-on-surface/40 backdrop-blur-sm px-4 overflow-y-auto"
+      onClick={handleDismiss}
+    >
+      <div
+        className=" relative w-full max-w-md md:max-w-4xl bg-white rounded-3xl shadow-xl p-8"
+        onClick={(e) => e.stopPropagation()}
+      >
         <button
           onClick={handleDismiss}
           className="absolute top-5 right-5 text-on-surface-variant hover:text-primary transition-colors"
