@@ -5,6 +5,7 @@ import type { SignupData } from '../../types/auth';
 import type { UpdateProfileData } from './AuthContext';
 import api from '../../lib/api';
 import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router';
 
 // ⚠️ TEMPORAL: mock para probar pantallas sin backend. Sacar cuando conectemos la API real.
 const MOCK_USER: User = {
@@ -36,6 +37,7 @@ const AuthContextProvider = ({ children }: { children: ReactNode }) => {
 
   // MOCK, RECUERDA CAMBIAR A TRUE DESPUÉS
   const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     //   if (!token) {
@@ -121,6 +123,7 @@ const AuthContextProvider = ({ children }: { children: ReactNode }) => {
     localStorage.removeItem('token');
     setToken(null);
     setUser(null);
+    navigate('/auth/login');
   };
 
   return (
