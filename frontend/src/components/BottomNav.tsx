@@ -3,6 +3,7 @@ import { FaRegUser } from 'react-icons/fa6';
 import { PiCompassRose } from 'react-icons/pi';
 import { FaRegCalendarAlt } from 'react-icons/fa';
 import { LiaMapMarkedAltSolid } from 'react-icons/lia';
+import { AiOutlineMessage } from 'react-icons/ai';
 
 const BottomNav = () => {
   return (
@@ -35,6 +36,16 @@ const BottomNav = () => {
       >
         <FaRegCalendarAlt size={20} />
         <span>Schedules</span>
+      </NavLink>
+
+      <NavLink
+        to={'/chats'}
+        className={({ isActive }) =>
+          `flex flex-col items-center px-4 py-2 rounded-lg text-sm ${isActive ? 'bg-primary-container font-bold text-on-surface' : 'text-primary'}`
+        }
+      >
+        <AiOutlineMessage size={25} />
+        <span>Chats</span>
       </NavLink>
 
       <NavLink
