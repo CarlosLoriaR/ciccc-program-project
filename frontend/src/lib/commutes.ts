@@ -1,4 +1,5 @@
 import type { Commute } from '../types/commute';
+import type { User } from '../types/user';
 import api from './api';
 
 export type CreateCommuteData = {
@@ -12,5 +13,29 @@ export const createCommute = async (
   data: CreateCommuteData,
 ): Promise<Commute> => {
   const res = await api.post<Commute>('/commutes', data);
+  return res.data;
+};
+
+export const listMyCommutes = async (): Promise<Commute[]> => {
+  const res = await api.get<Commute[]>('/commutes/me');
+  return res.data;
+};
+
+export type DiscoverCandidate = Omit<Commute, 'user_id'> & { user_id: User };
+
+export type DiscoverResult = {
+  items: DiscoverCandidate[];
+  page: number;
+  limit: number;
+  total: number;
+};
+
+export const discoverCommutes = async (
+  commuteId: string,
+  radiusKm = 10,
+): Promise<DiscoverResult> => {
+  const res = await api.get<DiscoverResult>('/commutes/discover', {
+    params: { commuteId, radiusKm },
+  });
   return res.data;
 };

@@ -13,6 +13,9 @@ export interface IUser extends Document {
   display_name?: string;
   avatar_url?: string;
   phone?: string;
+  bio?: string;
+  interests: string[];
+  photos: string[];
   home_location?: GeoPoint;
   work_location?: GeoPoint;
   preferred_modes: CommuteMode[];
@@ -20,6 +23,7 @@ export interface IUser extends Document {
   is_verified: boolean;
   rating_avg: number;
   rating_count: number;
+  total_rides: number;
   role: UserRole;
   status: UserStatus;
   created_at: Date;
@@ -43,6 +47,9 @@ const userSchema = new Schema<IUser>(
     display_name: { type: String, trim: true },
     avatar_url: String,
     phone: String,
+    bio: { type: String, trim: true, maxlength: 300 },
+    interests: { type: [String], default: [] },
+    photos: { type: [String], default: [] },
     home_location: geoPointSchema,
     work_location: geoPointSchema,
     preferred_modes: [{ type: String, enum: COMMUTE_MODES }],
@@ -50,6 +57,7 @@ const userSchema = new Schema<IUser>(
     is_verified: { type: Boolean, default: false },
     rating_avg: { type: Number, default: 0 },
     rating_count: { type: Number, default: 0 },
+    total_rides: { type: Number, default: 0 },
     role: { type: String, enum: USER_ROLES, default: 'user' },
     status: { type: String, enum: USER_STATUSES, default: 'active' },
   },

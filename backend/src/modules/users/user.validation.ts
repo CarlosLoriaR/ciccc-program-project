@@ -10,8 +10,13 @@ export const geoPointSchema = z.object({
 export const updateProfileSchema = z.object({
   full_name: z.string().trim().min(1).optional(),
   display_name: z.string().trim().min(1).optional(),
-  avatar_url: z.string().url().optional(),
+  // Plain string, not .url() — the frontend currently uploads via local blob: preview URLs
+  // (no cloud storage wired up yet), which aren't standard http(s) URLs.
+  avatar_url: z.string().optional(),
   phone: z.string().trim().optional(),
+  bio: z.string().trim().max(300).optional(),
+  interests: z.array(z.string().trim().min(1)).max(10).optional(),
+  photos: z.array(z.string()).max(5).optional(),
   preferred_modes: z.array(z.enum(COMMUTE_MODES)).optional(),
   schedule: z.record(z.unknown()).optional(),
 });

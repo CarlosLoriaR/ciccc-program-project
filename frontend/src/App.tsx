@@ -10,7 +10,7 @@ import Discover from './pages/Discover';
 import Schedules from './pages/Schedules';
 import Onboarding from './pages/Onboarding';
 import ProfileLayout from './layouts/ProfileLayout';
-// import ProtectedRoute from './components/auth/ProtectedRoute';
+import ProtectedRoute from './components/auth/ProtectedRoute';
 
 function App() {
   return (
@@ -25,20 +25,20 @@ function App() {
         </Route>
 
         {/* Protected Routes */}
-        {/* <Route element={<ProtectedRoute />}> */}
-        <Route path="onboarding" element={<Onboarding />} />
+        <Route element={<ProtectedRoute />}>
+          <Route path="onboarding" element={<Onboarding />} />
 
-        {/* Private Routes */}
-        <Route element={<PageLayout />}>
-          <Route path="map" element={<Map />} />
-          <Route path="discover" element={<Discover />} />
-          <Route path="schedules" element={<Schedules />} />
-        </Route>
+          {/* Private Routes */}
+          <Route element={<PageLayout />}>
+            <Route path="map" element={<Map />} />
+            <Route path="discover" element={<Discover />} />
+            <Route path="schedules" element={<Schedules />} />
+          </Route>
 
-        <Route element={<ProfileLayout />}>
-          <Route path="profile" element={<Profile />} />
+          <Route element={<ProfileLayout />}>
+            <Route path="profile" element={<Profile />} />
+          </Route>
         </Route>
-        {/* </Route> */}
 
         {/* 404 */}
         <Route path="*" element={<NotFound />} />

@@ -9,7 +9,9 @@ const waypointSchema = z.object({
 
 export const createCommuteSchema = z.object({
   title: z.string().trim().optional(),
-  mode: z.enum(COMMUTE_MODES),
+  // Defaults to 'car' — the onboarding flow doesn't ask for a transport mode yet,
+  // so this keeps commute creation working until that UI exists.
+  mode: z.enum(COMMUTE_MODES).default('car'),
   origin: geoPointSchema,
   destination: geoPointSchema,
   waypoints: z.array(waypointSchema).optional(),

@@ -10,7 +10,6 @@ const Onboarding = () => {
   const { updateProfile } = useAuth();
   const navigate = useNavigate();
 
-  const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [avatarPreview, setAvatarPreview] = useState<string | undefined>();
   const [origin, setOrigin] = useState('');
   const [destination, setDestination] = useState('');
@@ -48,7 +47,9 @@ const Onboarding = () => {
         origin: { type: 'Point', coordinates: [0, 0], label: origin },
         destination: { type: 'Point', coordinates: [0, 0], label: destination },
         departure_time: departureTime,
-        days_of_week: weekDays,
+        // Backend expects lowercase day codes ('mon', 'tue', ...); the UI keeps the
+        // capitalized labels ('Mon', 'Tue', ...) for display.
+        days_of_week: weekDays.map((day) => day.toLowerCase()),
       });
       navigate('/discover');
     } catch (error) {
@@ -72,8 +73,7 @@ const Onboarding = () => {
 
         <div className="flex justify-center mb-6">
           <AvatarUpload
-            onFileSelect={(file, url) => {
-              setAvatarFile(file);
+            onFileSelect={(_file, url) => {
               setAvatarPreview(url);
             }}
           />

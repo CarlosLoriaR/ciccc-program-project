@@ -87,7 +87,7 @@ export async function discoverCommutes(requesterId: string, params: DiscoverPara
 
   const [items, total] = await Promise.all([
     CommuteModel.find(filter)
-      .populate('user_id', 'full_name display_name avatar_url rating_avg rating_count')
+      .populate('user_id', 'full_name display_name avatar_url bio interests photos rating_avg rating_count total_rides')
       .skip(params.skip)
       .limit(params.limit)
       .sort({ created_at: -1 }),
