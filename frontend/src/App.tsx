@@ -27,22 +27,25 @@ function App() {
         </Route>
 
         {/* Protected Routes */}
-        {/* <Route element={<ProtectedRoute />}> */}
-        <Route path="onboarding" element={<Onboarding />} />
+        <Route element={<ProtectedRoute />}>
+          <Route path="onboarding" element={<Onboarding />} />
 
-        {/* Private Routes */}
-        <Route element={<PageLayout />}>
-          <Route path="map" element={<Map />} />
-          <Route path="discover" element={<Discover />} />
-          <Route path="schedules" element={<Schedules />} />
-          <Route path="chats" element={<ChatList />} />
-          <Route path="chats/:conversationId" element={<ChatConversation />} />
-        </Route>
+          {/* Private Routes */}
+          <Route element={<PageLayout />}>
+            <Route path="map" element={<Map />} />
+            <Route path="discover" element={<Discover />} />
+            <Route path="schedules" element={<Schedules />} />
+            <Route path="chats" element={<ChatList />} />
+            <Route
+              path="chats/:conversationId"
+              element={<ChatConversation />}
+            />
+          </Route>
 
-        <Route element={<ProfileLayout />}>
-          <Route path="profile" element={<Profile />} />
+          <Route element={<ProfileLayout />}>
+            <Route path="profile" element={<Profile />} />
+          </Route>
         </Route>
-        {/* </Route> */}
 
         {/* 404 */}
         <Route path="*" element={<NotFound />} />

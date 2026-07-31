@@ -6,66 +6,42 @@ import type { UpdateProfileData } from './AuthContext';
 import api from '../../lib/api';
 import toast from 'react-hot-toast';
 
-// ⚠️ TEMPORAL: mock para probar pantallas sin backend. Sacar cuando conectemos la API real.
-const MOCK_USER: User = {
-  _id: '1',
-  email: 'jane@example.com',
-  full_name: 'Jane Doe',
-  display_name: 'Jane',
-  avatar_url:
-    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSmIUHezoShRZ9jroRwTSttj52ou3HpCmXi-wSVSFoBaQ&s=10',
-  home_location: { type: 'Point', coordinates: [0, 0] },
-  work_location: { type: 'Point', coordinates: [0, 0] },
-  preferred_modes: [],
-  rating_avg: 4.9,
-  rating_count: 50,
-  role: 'user',
-  status: 'active',
-  created_at: '',
-  updated_at: '',
-  bio: 'Entusiasta del carpooling y amante de la tecnología.',
-  interests: ['Coding', 'Music', 'Travel', 'Movies'],
-  total_rides: 42,
-};
-
 const AuthContextProvider = ({ children }: { children: ReactNode }) => {
-  // MOCK, RECUERDA CAMBIAR A (null) DESPUÉS
-  const [user, setUser] = useState<User | null>(MOCK_USER);
-  // MOCK, RECUERDA CAMBIAR A (localStorage.getItem('token')) DESPUÉS
-  const [token, setToken] = useState<string | null>('mock-tocken');
-
-  // MOCK, RECUERDA CAMBIAR A TRUE DESPUÉS
-  const [isLoading, setIsLoading] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
+  const [token, setToken] = useState<string | null>(localStorage.getItem('token'));
+  // Only start "loading" if there's a token to actually validate — avoids an
+  // unnecessary setState-in-effect for the logged-out case.
+  const [isLoading, setIsLoading] = useState<boolean>(() => !!localStorage.getItem('token'));
 
   useEffect(() => {
-    //   if (!token) {
-    //     setIsLoading(false);
-    //     return;
-    //   }
-    //   const fetchUser = async () => {
-    //     try {
-    //       const res = await api.get<User>('auth/me');
-    //       setUser(res.data);
-    //     } catch (error) {
-    //       console.error(error);
-    //       localStorage.removeItem('token');
-    //       setToken(null);
-    //       setUser(null);
-    //     } finally {
-    //       setIsLoading(false);
-    //     }
-    //   };
-    //   fetchUser();
+    if (!token) {
+      return;
+    }
+
+    const fetchUser = async () => {
+      try {
+        const res = await api.get<User>('/users/me');
+        setUser(res.data);
+      } catch (error) {
+        console.error(error);
+        localStorage.removeItem('token');
+        setToken(null);
+        setUser(null);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchUser();
   }, [token]);
 
   const login = async (email: string, password: string) => {
     try {
-      const res = await api.post<{ user: User; token: string }>('auth/login', {
+      const res = await api.post<{ user: User; accessToken: string }>('/auth/login', {
         email,
         password,
       });
-      localStorage.setItem('token', res.data.token);
-      setToken(res.data.token);
+      localStorage.setItem('token', res.data.accessToken);
+      setToken(res.data.accessToken);
       setUser(res.data.user);
     } catch (error) {
       console.error(error);
@@ -76,12 +52,12 @@ const AuthContextProvider = ({ children }: { children: ReactNode }) => {
 
   const signup = async (data: SignupData) => {
     try {
-      const res = await api.post<{ user: User; token: string }>(
-        'auth/signup',
+      const res = await api.post<{ user: User; accessToken: string }>(
+        '/auth/register',
         data,
       );
-      localStorage.setItem('token', res.data.token);
-      setToken(res.data.token);
+      localStorage.setItem('token', res.data.accessToken);
+      setToken(res.data.accessToken);
       setUser(res.data.user);
     } catch (error) {
       console.error(error);
@@ -101,23 +77,10 @@ const AuthContextProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  // // ⚠️ TEMPORAL: mientras no hay backend, actualizamos el user localmente en vez de llamar a la API real.
-  // const updateProfile = async (data: UpdateProfileData) => {
-  //   try {
-  //     // Cuando el backend esté listo, descomentar la llamada real y borrar estas 2 líneas.
-  //     setUser((prev) => (prev ? { ...prev, ...data } : prev));
-  //     return;
-
-  //     // const res = await api.patch<User>('/users/me', data);
-  //     // setUser(res.data);
-  //   } catch (error) {
-  //     console.error(error);
-  //     toast.error('Could not update profile. Please try again.');
-  //     throw error;
-  //   }
-  // };
-
   const logout = () => {
+    api.post('/auth/logout').catch(() => {
+      // best-effort — the server-side session will still expire on its own
+    });
     localStorage.removeItem('token');
     setToken(null);
     setUser(null);
