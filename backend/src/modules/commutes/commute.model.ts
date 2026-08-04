@@ -18,7 +18,7 @@ export interface ICommute extends Document {
   _id: Types.ObjectId;
   user_id: Types.ObjectId;
   title?: string;
-  mode: CommuteMode;
+  modes: CommuteMode[];
   origin: GeoPoint;
   destination: GeoPoint;
   waypoints: Waypoint[];
@@ -51,7 +51,7 @@ const commuteSchema = new Schema<ICommute>(
   {
     user_id: { type: Schema.Types.ObjectId, ref: 'User', required: true, index: true },
     title: String,
-    mode: { type: String, enum: COMMUTE_MODES, required: true },
+    modes: { type: [String], enum: COMMUTE_MODES, required: true },
     origin: { type: geoPointSchema, required: true },
     destination: { type: geoPointSchema, required: true },
     waypoints: { type: [waypointSchema], default: [] },

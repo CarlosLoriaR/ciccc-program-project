@@ -4,7 +4,7 @@ export type Commute = {
   _id: string;
   user_id: string;
   title: string;
-  mode: string;
+  modes: string[];
   origin: GeoJSONPoint & { label?: string };
   destination: GeoJSONPoint & { label?: string };
   waypoints: GeoJSONPoint[];

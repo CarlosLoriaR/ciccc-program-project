@@ -7,6 +7,7 @@ export type CreateCommuteData = {
   destination: { type: 'Point'; coordinates: [number, number]; label?: string };
   departure_time: string;
   days_of_week: string[];
+  modes: string[];
 };
 
 export const createCommute = async (
@@ -21,7 +22,17 @@ export const listMyCommutes = async (): Promise<Commute[]> => {
   return res.data;
 };
 
-export type DiscoverCandidate = Omit<Commute, 'user_id'> & { user_id: User };
+export const getCommuteById = async (id: string): Promise<Commute> => {
+  const res = await api.get<Commute>(`/commutes/${id}`);
+  return res.data;
+};
+
+export type DiscoverCandidate = Omit<Commute, 'user_id'> & {
+  user_id: User;
+  // Set when this candidate already sent ME a pending request — hitting "Connect" on
+  // them should accept that request instead of filing a duplicate new one.
+  pending_match_id: string | null;
+};
 
 export type DiscoverResult = {
   items: DiscoverCandidate[];

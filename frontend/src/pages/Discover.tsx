@@ -5,7 +5,7 @@ import ProfileCard from '../components/ProfileCard';
 import type { User } from '../types/user';
 import type { Commute } from '../types/commute';
 import { discoverCommutes, listMyCommutes, type DiscoverCandidate } from '../lib/commutes';
-import { createMatch } from '../lib/matches';
+import { createMatch, respondToMatch } from '../lib/matches';
 
 // The discover endpoint only returns a subset of the other user's profile
 // (name, avatar, bio, interests, rating). ProfileCard only reads those fields,
@@ -71,15 +71,22 @@ const Discover = () => {
     if (!myCommute || !current || isConnecting) return;
     setIsConnecting(true);
     try {
-      await createMatch({
-        addressee_id: current.user_id._id,
-        requester_commute_id: myCommute._id,
-        addressee_commute_id: current._id,
-      });
-      toast.success('Connection request sent!');
+      if (current.pending_match_id) {
+        // They already requested us — "Connect" here accepts it instead of filing a
+        // second, duplicate request (which the backend would reject anyway).
+        await respondToMatch(current.pending_match_id, 'accept');
+        toast.success(`You matched with ${current.user_id.display_name || current.user_id.full_name}! You can now chat.`);
+      } else {
+        await createMatch({
+          addressee_id: current.user_id._id,
+          requester_commute_id: myCommute._id,
+          addressee_commute_id: current._id,
+        });
+        toast.success('Connection request sent!');
+      }
     } catch (error) {
       console.error(error);
-      toast.error('Could not send the connection request.');
+      toast.error('Could not complete that action.');
     } finally {
       setIsConnecting(false);
       setIndex((i) => i + 1);
