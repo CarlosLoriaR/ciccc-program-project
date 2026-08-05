@@ -12,7 +12,9 @@ import Onboarding from './pages/Onboarding';
 import ProfileLayout from './layouts/ProfileLayout';
 import ChatList from './pages/chats/ChatList';
 import ChatConversation from './pages/chats/ChatConversation';
-// import ProtectedRoute from './components/auth/ProtectedRoute';
+import ChatListLayout from './layouts/ChatListLayout';
+import ConversationLayout from './layouts/ConversationLayout';
+import ProtectedRoute from './components/auth/ProtectedRoute';
 
 function App() {
   return (
@@ -35,15 +37,21 @@ function App() {
             <Route path="map" element={<Map />} />
             <Route path="discover" element={<Discover />} />
             <Route path="schedules" element={<Schedules />} />
-            <Route path="chats" element={<ChatList />} />
-            <Route
-              path="chats/:conversationId"
-              element={<ChatConversation />}
-            />
           </Route>
 
           <Route element={<ProfileLayout />}>
             <Route path="profile" element={<Profile />} />
+          </Route>
+
+          <Route element={<ChatListLayout />}>
+            <Route path="chats" element={<ChatList />} />
+          </Route>
+
+          <Route element={<ConversationLayout />}>
+            <Route
+              path="chats/:conversationId"
+              element={<ChatConversation />}
+            />
           </Route>
         </Route>
 
