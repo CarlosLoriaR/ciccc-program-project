@@ -4,6 +4,7 @@ import { FiMapPin, FiStar, FiX } from 'react-icons/fi';
 import { FaRegCircle } from 'react-icons/fa6';
 import { LuMessageCircleMore } from 'react-icons/lu';
 import { IoCarSport } from 'react-icons/io5';
+import { useState } from 'react';
 
 type ProfileCardProps = {
   user: User;
@@ -18,24 +19,66 @@ const ProfileCard = ({
   onSkip,
   onConnect,
 }: ProfileCardProps) => {
+  const photos = [user.avatar_url, ...(user.photos ?? [])].filter(Boolean);
+  const [photoIndex, setPhotoIndex] = useState(0);
+
+  const goNext = () => {
+    setPhotoIndex((i) => Math.min(i + 1, photos.length - 1));
+  };
+
+  const goPrev = () => {
+    setPhotoIndex((i) => Math.max(i - 1, 0));
+  };
   return (
     <div className="rounded-lg border border-outline-variant overflow-hidden bg-white mx-auto md:w-[92%]">
-      {/* Img + name */}
+      {/* Imgs + name */}
       <div className="relative h-96">
         <img
-          src={user.avatar_url}
+          src={photos[photoIndex]}
           alt={user.display_name}
           className="w-full h-full object-cover"
         />
 
+        {photos.length > 1 && (
+          <div className="absolute top-2 left-2 right-2 flex gap-1">
+            {photos.map((_, i) => (
+              <div
+                key={i}
+                className="flex-1 h-1 rounded-full bg-white/40 overflow-hidden"
+              >
+                <div
+                  className={`h-full bg-white transition-all ${
+                    i <= photoIndex ? 'w-full' : 'w-0'
+                  }`}
+                />
+              </div>
+            ))}
+          </div>
+        )}
+
+        {photos.length > 1 && (
+          <>
+            <button
+              type="button"
+              onClick={goPrev}
+              className="absolute left-0 top-0 w-1/2 h-full"
+            />
+
+            <button
+              type="button"
+              onClick={goNext}
+              className="absolute left-0 top-0 w-1/2 h-full"
+            />
+          </>
+        )}
+
         <div className="absolute inset-0 bg-linear-to-t from-black/70 via-black/10 to-transparent" />
         <div className="absolute bottom-0 left-0 p-4 text-white">
           <h2 className="text-2xl font-bold">{user.display_name}</h2>
-          {user.rating_avg >= 4.5 && (
-            <span className="text-sm">✓ Top Commuter</span>
-          )}
+          {user.rating_avg >= 4.5}
         </div>
       </div>
+
       {/* Route */}
       <div className="m-4 p-4 rounded-md bg-surface-container-2 flex justify-between items-center">
         <div className="flex gap-3">
