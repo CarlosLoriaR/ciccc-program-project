@@ -6,7 +6,7 @@ const ChatListLayout = () => {
   return (
     <div className="min-h-screen flex flex-col bg-surface">
       <ChatListHeader />
-      <main>
+      <main className="flex-1">
         <Outlet />
       </main>
       <BottomNav />
