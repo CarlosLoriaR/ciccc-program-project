@@ -31,8 +31,6 @@ function App() {
         {/* Protected Routes */}
         <Route element={<ProtectedRoute />}>
           <Route path="onboarding" element={<Onboarding />} />
-        <Route element={<ProtectedRoute />}>
-          <Route path="onboarding" element={<Onboarding />} />
 
           {/* Private Routes */}
           <Route element={<PageLayout />}>

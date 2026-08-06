@@ -4,7 +4,11 @@ import toast from 'react-hot-toast';
 import ProfileCard from '../components/ProfileCard';
 import type { User } from '../types/user';
 import type { Commute } from '../types/commute';
-import { discoverCommutes, listMyCommutes, type DiscoverCandidate } from '../lib/commutes';
+import {
+  discoverCommutes,
+  listMyCommutes,
+  type DiscoverCandidate,
+} from '../lib/commutes';
 import { createMatch } from '../lib/matches';
 
 // The discover endpoint only returns a subset of the other user's profile
