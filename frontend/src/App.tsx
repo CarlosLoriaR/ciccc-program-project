@@ -31,7 +31,15 @@ function App() {
         {/* Protected Routes */}
         <Route element={<ProtectedRoute />}>
           <Route path="onboarding" element={<Onboarding />} />
+        <Route element={<ProtectedRoute />}>
+          <Route path="onboarding" element={<Onboarding />} />
 
+          {/* Private Routes */}
+          <Route element={<PageLayout />}>
+            <Route path="map" element={<Map />} />
+            <Route path="discover" element={<Discover />} />
+            <Route path="schedules" element={<Schedules />} />
+          </Route>
           {/* Private Routes */}
           <Route element={<PageLayout />}>
             <Route path="map" element={<Map />} />
