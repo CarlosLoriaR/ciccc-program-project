@@ -5,6 +5,12 @@ import { FaRegCircle } from 'react-icons/fa6';
 import { LuMessageCircleMore } from 'react-icons/lu';
 import { IoCarSport } from 'react-icons/io5';
 import { useState } from 'react';
+import { formatTime } from '../utils/formatTime';
+import { FaCalendarAlt } from 'react-icons/fa';
+import {
+  MdOutlineKeyboardArrowLeft,
+  MdOutlineKeyboardArrowRight,
+} from 'react-icons/md';
 
 type ProfileCardProps = {
   user: User;
@@ -20,6 +26,7 @@ const ProfileCard = ({
   onConnect,
 }: ProfileCardProps) => {
   const photos = [user.avatar_url, ...(user.photos ?? [])].filter(Boolean);
+  console.log('photos array', photos);
   const [photoIndex, setPhotoIndex] = useState(0);
 
   const goNext = () => {
@@ -62,51 +69,71 @@ const ProfileCard = ({
               type="button"
               onClick={goPrev}
               className="absolute left-0 top-0 w-1/2 h-full"
-            />
+            >
+              <MdOutlineKeyboardArrowLeft />
+            </button>
 
             <button
               type="button"
               onClick={goNext}
-              className="absolute left-0 top-0 w-1/2 h-full"
-            />
+              className="absolute right-0 top-0 w-1/2 h-full"
+            >
+              <MdOutlineKeyboardArrowRight />
+            </button>
           </>
         )}
 
         <div className="absolute inset-0 bg-linear-to-t from-black/70 via-black/10 to-transparent" />
         <div className="absolute bottom-0 left-0 p-4 text-white">
           <h2 className="text-2xl font-bold">{user.display_name}</h2>
-          {user.rating_avg >= 4.5}
+          {user.rating_avg >= 4.5 && (
+            <span className="text-sm">✓ Top Commuter</span>
+          )}
         </div>
       </div>
 
       {/* Route */}
-      <div className="m-4 p-4 rounded-md bg-surface-container-2 flex justify-between items-center">
-        <div className="flex gap-3">
-          <div className="flex flex-col items-center pt-1">
-            <FaRegCircle className="text-primary" size={14} />
-            <div className="w-0.5 flex-1 bg-outline-variant my-1.5" />
-            <FiMapPin className="text-primary" size={16} />
+      <div className="m-4 p-4 rounded-md bg-surface-container-2">
+        <div className="flex justify-between items-center">
+          <div className="flex gap-3">
+            <div className="flex flex-col items-center pt-1">
+              <FaRegCircle className="text-primary" size={14} />
+              <div className="w-0.5 flex-1 bg-outline-variant my-1.5" />
+              <FiMapPin className="text-primary" size={16} />
+            </div>
+
+            <div>
+              <p className="text-xs text-primary font-bold">FROM</p>
+              <p className="font-bold text-on-surface text-2xl">
+                {commute.origin.label}
+              </p>
+              <p className="text-xs text-primary font-bold mt-2">TO</p>
+              <p className="font-bold text-on-surface text-2xl">
+                {commute.destination.label}
+              </p>
+            </div>
           </div>
 
-          <div>
-            <p className="text-xs text-primary font-bold">FROM</p>
-            <p className="font-bold text-on-surface text-2xl">
-              {commute.origin.label}
-            </p>
-            <p className="text-xs text-primary font-bold mt-2">TO</p>
-            <p className="font-bold text-on-surface text-2xl">
-              {commute.destination.label}
+          <div className="text-right">
+            <p className="text-xs text-primary font-bold">DEPARTS</p>
+            <p className="font-bold text-primary text-2xl">
+              {formatTime(commute.departure_time)}
             </p>
           </div>
         </div>
 
-        <div className="text-right">
-          <p className="text-xs text-primary font-bold">DEPARTS</p>
-          <p className="font-bold text-primary text-2xl">
-            {commute.departure_time}
-          </p>
-        </div>
+        {commute.days_of_week && commute.days_of_week.length > 0 && (
+          <div className="flex items-center gap-2 text-sm text-on-surface-variant mt-3 pt-3 border-t border-outline-variant/50">
+            <FaCalendarAlt size={14} className="text-primary" />
+            <span className="font-semibold">
+              {commute.days_of_week
+                .map((day) => day.charAt(0).toUpperCase() + day.slice(1, 3))
+                .join(', ')}
+            </span>
+          </div>
+        )}
       </div>
+
       {/* Bio */}
       {user.bio && (
         <p className="px-4 text-on-surface-variant font-semibold">{user.bio}</p>
