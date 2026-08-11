@@ -50,3 +50,13 @@ export const discoverCommutes = async (
   });
   return res.data;
 };
+
+export type UpdateCommuteData = Partial<CreateCommuteData>;
+
+export const updateCommute = async (
+  id: string,
+  data: UpdateCommuteData,
+): Promise<Commute> => {
+  const res = await api.patch<Commute>(`/commutes/${id}`, data);
+  return res.data;
+};
