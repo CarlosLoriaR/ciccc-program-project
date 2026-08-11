@@ -1,23 +1,59 @@
 import { Link } from 'react-router';
-import type { Conversation, Message } from '../../types/chat';
-import { conversationList } from '../../lib/conversations';
+// import type { Conversation, Message } from '../../types/chat';
+import {
+  listConversations,
+  type ConversationSummary,
+} from '../../lib/conversations';
 import { useAuth } from '../../context/auth/useAuth';
 import { useEffect, useState } from 'react';
+// import { MOCK_CONVERSATIONS } from '../../constants/chatMocks';
 
-type ConversationEntry = {
-  conversation: Conversation;
-  lastMessage: Message | null;
-};
+// type ConversationEntry = {
+//   conversation: Conversation;
+//   lastMessage: Message | null;
+// };
 
 const ChatList = () => {
   const { user } = useAuth();
-  const [entries, setEntries] = useState<ConversationEntry[]>([]);
+  const [entries, setEntries] = useState<ConversationSummary[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    // if (!user) {
+    //   setIsLoading(false);
+    //   return;
+    // }
+
+    // // ⚠️ TEMPORAL: mock en vez de conversationList() real
+    // const mockEntries: ConversationEntry[] = MOCK_CONVERSATIONS.map((mock) => ({
+    //   conversation: {
+    //     _id: mock.id,
+    //     match_id: `match-${mock.id}`,
+    //     participant_ids: [
+    //       {
+    //         _id: user._id,
+    //         full_name: user.full_name,
+    //         display_name: user.display_name,
+    //         avatar_url: user.avatar_url,
+    //       },
+    //       mock.otherUser,
+    //     ],
+    //     created_at: new Date().toISOString(),
+    //   },
+    //   lastMessage: {
+    //     _id: `msg-${mock.id}`,
+    //     conversation_id: mock.id,
+    //     sender_id: mock.lastMessageSender,
+    //     body: mock.lastMessageBody,
+    //     attachments: [],
+    //     read_by: [],
+    //     created_at: new Date().toISOString(),
+    //   },
+    // }));
+
     const load = async () => {
       try {
-        const data = await conversationList();
+        const data = await listConversations();
         setEntries(data);
       } catch (error) {
         console.error(error);
@@ -26,7 +62,10 @@ const ChatList = () => {
       }
     };
     load();
-  }, []);
+
+    // setEntries(mockEntries);
+    // setIsLoading(false);
+  }, []); //para el mock lleva [user]
 
   if (isLoading) {
     return (
@@ -44,7 +83,7 @@ const ChatList = () => {
   }
 
   return (
-    <div className="max-w-md mx-auto md:max-w-2xl divide-y divide-outline-variant">
+    <div className="max-w-md mx-auto md:max-w-2xl divide-y divide-outline-variant ">
       {entries.map(({ conversation, lastMessage }) => {
         const otherParticipant = conversation.participant_ids.find(
           (p) => p._id !== user?._id,
@@ -53,12 +92,10 @@ const ChatList = () => {
           <Link
             to={`/chats/${conversation._id}`}
             key={conversation._id}
-            className="flex items-center gap-3 p-4 hover:bg-surface-container-low transition-colors"
+            className="flex items-center gap-3 p-4 rounded-2xl  hover:bg-surface-container transition-colors"
           >
             <img
-              src={
-                otherParticipant?.avatar_url || 'https://placehold.co/100x100'
-              }
+              src={otherParticipant?.avatar_url}
               alt={
                 otherParticipant?.display_name || otherParticipant?.full_name
               }

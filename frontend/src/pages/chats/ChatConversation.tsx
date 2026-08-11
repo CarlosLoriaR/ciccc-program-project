@@ -34,11 +34,15 @@ const ChatConversation = () => {
     socket.emit('conversation:join', { conversationId });
 
     const handleNewMessage = ({ message }: { message: Message }) => {
-      if (message.conversation_id === conversationId) {
-        setMessages((prev) => [...prev, message]);
+      if (message.conversation_id !== conversationId) {
+        setMessages((prev) => {
+          if (prev.some((m) => m._id === message._id)) return prev;
+          return [...prev, message];
+        });
       }
     };
 
+    socket.off('message:new', handleNewMessage);
     socket.on('message:new', handleNewMessage);
 
     return () => {
@@ -73,7 +77,7 @@ const ChatConversation = () => {
                 className={`max-w-[75%] px-4 py-2 rounded-2xl ${
                   isOwn
                     ? 'bg-primary text-on-primary'
-                    : 'bg-surface-container-low text-on-surface'
+                    : 'bg-surface-container-highest text-black'
                 }`}
               >
                 {message.body}
@@ -86,14 +90,14 @@ const ChatConversation = () => {
 
       <form
         onSubmit={handleSend}
-        className="flex items-center gap-2 p-3 border-t border-outline-variant bg-surface-container-low"
+        className="flex items-center gap-2 p-3 border-t border-outline-variant bg-surface-container-high"
       >
         <input
           type="text"
           value={draft}
           onChange={(e) => setDraft(e.target.value)}
           placeholder="Type a message..."
-          className="flex-1 px-4 py-2.5 bg-surface-container-low rounded-full text-on-surface placeholder:text-outline focus:outline-none"
+          className="flex-1 px-4 py-2.5 bg-surface-container-low rounded-full text-on-surface placeholder:text-outline focus:outline-none border"
         />
         <button
           type="submit"

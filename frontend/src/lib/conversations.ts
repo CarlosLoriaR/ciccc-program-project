@@ -1,5 +1,5 @@
 import api from './api';
-import type { Conversation, Message } from '../types/chat';
+import type { Message } from '../types/chat';
 
 export type ConversationSummary = {
   conversation: {
@@ -16,15 +16,15 @@ export type ConversationSummary = {
   lastMessage: { body: string; sender_id: string; created_at: string } | null;
 };
 
-export const conversationList = async (): Promise<
-  {
-    conversation: Conversation;
-    lastMessage: Message | null;
-  }[]
-> => {
-  const res = await api.get('/conversations');
-  return res.data;
-};
+// export const conversationList = async (): Promise<
+//   {
+//     conversation: Conversation;
+//     lastMessage: Message | null;
+//   }[]
+// > => {
+//   const res = await api.get('/conversations');
+//   return res.data;
+// };
 
 export const getConversationById = async (id: string) => {
   const res = await api.get(`/conversations/${id}`);
@@ -42,5 +42,10 @@ export const listMessages = async (
       params: { before, limit },
     },
   );
+  return res.data;
+};
+
+export const listConversations = async (): Promise<ConversationSummary[]> => {
+  const res = await api.get<ConversationSummary[]>('/conversations');
   return res.data;
 };
