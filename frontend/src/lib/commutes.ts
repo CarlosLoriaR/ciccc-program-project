@@ -7,6 +7,7 @@ export type CreateCommuteData = {
   destination: { type: 'Point'; coordinates: [number, number]; label?: string };
   departure_time: string;
   days_of_week: string[];
+  modes: string[];
 };
 
 export const createCommute = async (
@@ -18,6 +19,11 @@ export const createCommute = async (
 
 export const listMyCommutes = async (): Promise<Commute[]> => {
   const res = await api.get<Commute[]>('/commutes/me');
+  return res.data;
+};
+
+export const getCommuteById = async (id: string): Promise<Commute> => {
+  const res = await api.get<Commute>(`/commutes/${id}`);
   return res.data;
 };
 
