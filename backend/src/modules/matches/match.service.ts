@@ -5,6 +5,17 @@ import { CreateMatchInput, ListMatchesQuery, RespondMatchInput } from './match.v
 import { createConversationForMatch } from '../conversations/conversation.service';
 import { notify } from '../notifications/notification.service';
 
+async function acceptMatch(match: IMatch): Promise<IMatch> {
+  match.status = 'accepted';
+  match.matched_at = new Date();
+  await match.save();
+  await createConversationForMatch(match);
+  await notify(match.requester_id.toString(), 'match_accepted', 'Match accepted', 'Your connection request was accepted', {
+    matchId: match._id.toString(),
+  });
+  return match;
+}
+
 export async function createMatch(requesterId: string, input: CreateMatchInput): Promise<IMatch> {
   if (input.addressee_id === requesterId) {
     throw new BadRequestError('You cannot connect with yourself');
@@ -20,6 +31,20 @@ export async function createMatch(requesterId: string, input: CreateMatchInput):
   }
   if (!addresseeCommute || addresseeCommute.user_id.toString() !== input.addressee_id) {
     throw new BadRequestError('addressee_commute_id must belong to the addressee');
+  }
+
+  // The other person may have already sent US a pending request — e.g. both people had
+  // Discover open and swiped "Connect" on each other around the same time, before either
+  // side's app knew about the other's request. Rather than filing a second, opposite-
+  // direction match (which the compound unique index wouldn't even catch, since requester/
+  // addressee are swapped), treat this as accepting theirs.
+  const reversePending = await MatchModel.findOne({
+    requester_id: input.addressee_id,
+    addressee_id: requesterId,
+    status: 'pending',
+  });
+  if (reversePending) {
+    return acceptMatch(reversePending);
   }
 
   const existing = await MatchModel.findOne({
@@ -79,18 +104,11 @@ export async function respondToMatch(matchId: string, userId: string, input: Res
   if (match.status !== 'pending') throw new ConflictError('This match has already been resolved');
 
   if (input.action === 'accept') {
-    match.status = 'accepted';
-    match.matched_at = new Date();
-    await match.save();
-    await createConversationForMatch(match);
-    await notify(match.requester_id.toString(), 'match_accepted', 'Match accepted', 'Your connection request was accepted', {
-      matchId: match._id.toString(),
-    });
-  } else {
-    match.status = 'declined';
-    await match.save();
+    return acceptMatch(match);
   }
 
+  match.status = 'declined';
+  await match.save();
   return match;
 }
 
