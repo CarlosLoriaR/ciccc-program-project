@@ -7,7 +7,11 @@ import { FaRegCircle } from 'react-icons/fa6';
 import { LuMessageCircleMore, LuUsers } from 'react-icons/lu';
 import 'leaflet/dist/leaflet.css';
 import type { Commute } from '../types/commute';
-import { discoverCommutes, getCommuteById, listMyCommutes } from '../lib/commutes';
+import {
+  discoverCommutes,
+  getCommuteById,
+  listMyCommutes,
+} from '../lib/commutes';
 import { listMatches, type PopulatedMatch } from '../lib/matches';
 import { listConversations } from '../lib/conversations';
 import { useAuth } from '../context/auth/useAuth';
@@ -40,11 +44,12 @@ const Map = () => {
         setMyCommute(active);
         if (!active || !user) return;
 
-        const [discoverResult, acceptedMatches, conversations] = await Promise.all([
-          discoverCommutes(active._id, RADIUS_KM),
-          listMatches({ status: 'accepted' }),
-          listConversations(),
-        ]);
+        const [discoverResult, acceptedMatches, conversations] =
+          await Promise.all([
+            discoverCommutes(active._id, RADIUS_KM),
+            listMatches({ status: 'accepted' }),
+            listConversations(),
+          ]);
 
         setPossibleMatchesCount(discoverResult.total);
 
@@ -56,8 +61,12 @@ const Map = () => {
         const pins = await Promise.all(
           acceptedMatches.map(async (match): Promise<MatchedPin | null> => {
             const isRequester = match.requester_id._id === user._id;
-            const otherUser = isRequester ? match.addressee_id : match.requester_id;
-            const otherCommuteId = isRequester ? match.addressee_commute_id : match.requester_commute_id;
+            const otherUser = isRequester
+              ? match.addressee_id
+              : match.requester_id;
+            const otherCommuteId = isRequester
+              ? match.addressee_commute_id
+              : match.requester_commute_id;
 
             try {
               const commute = await getCommuteById(otherCommuteId);
@@ -76,7 +85,10 @@ const Map = () => {
         const nearby = pins.filter(
           (pin): pin is MatchedPin =>
             pin !== null &&
-            distanceKm(active.origin.coordinates, pin.commute.origin.coordinates) <= RADIUS_KM,
+            distanceKm(
+              active.origin.coordinates,
+              pin.commute.origin.coordinates,
+            ) <= RADIUS_KM,
         );
         setMatchedPins(nearby);
       } catch (error) {
@@ -90,7 +102,9 @@ const Map = () => {
   }, [user]);
 
   if (isLoading) {
-    return <div className="p-4 text-center text-on-surface-variant">Loading...</div>;
+    return (
+      <div className="p-4 text-center text-on-surface-variant">Loading...</div>
+    );
   }
 
   if (!myCommute) {
@@ -117,7 +131,12 @@ const Map = () => {
   return (
     <div className="flex flex-col h-full">
       <div className="h-[60vh] mx-3 mt-3 rounded-lg overflow-hidden border border-outline-variant">
-        <MapContainer center={center} zoom={12} scrollWheelZoom className="h-full w-full">
+        <MapContainer
+          center={center}
+          zoom={12}
+          scrollWheelZoom
+          className="h-full w-full"
+        >
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -132,15 +151,23 @@ const Map = () => {
               pin.commute.origin.coordinates[1],
               pin.commute.origin.coordinates[0],
             ];
-            const displayName = pin.otherUser.display_name || pin.otherUser.full_name;
+            const displayName =
+              pin.otherUser.display_name || pin.otherUser.full_name;
 
             return (
-              <Marker key={pin.matchId} position={position} icon={candidateIcon}>
+              <Marker
+                key={pin.matchId}
+                position={position}
+                icon={candidateIcon}
+              >
                 <Popup minWidth={220} maxWidth={260}>
                   <div className="space-y-2 py-0.5">
                     <div className="flex items-center gap-2">
                       <img
-                        src={pin.otherUser.avatar_url || 'https://placehold.co/64x64'}
+                        src={
+                          pin.otherUser.avatar_url ||
+                          'https://placehold.co/64x64'
+                        }
                         alt={displayName}
                         className="w-10 h-10 rounded-full object-cover"
                       />
@@ -149,13 +176,18 @@ const Map = () => {
 
                     <div className="flex items-start gap-2 text-xs text-on-surface-variant">
                       <div className="flex flex-col items-center pt-0.5">
-                        <FaRegCircle className="text-primary shrink-0" size={9} />
+                        <FaRegCircle
+                          className="text-primary shrink-0"
+                          size={9}
+                        />
                         <div className="w-px flex-1 bg-outline-variant my-0.5" />
                         <FiMapPin className="text-primary shrink-0" size={12} />
                       </div>
                       <div className="min-w-0">
                         <p className="truncate">{pin.commute.origin.label}</p>
-                        <p className="mt-2.5 truncate">{pin.commute.destination.label}</p>
+                        <p className="mt-2.5 truncate">
+                          {pin.commute.destination.label}
+                        </p>
                       </div>
                     </div>
 
@@ -166,7 +198,10 @@ const Map = () => {
 
                     <button
                       type="button"
-                      onClick={() => pin.conversationId && navigate(`/chat/${pin.conversationId}`)}
+                      onClick={() =>
+                        pin.conversationId &&
+                        navigate(`/chats/${pin.conversationId}`)
+                      }
                       disabled={!pin.conversationId}
                       className="mt-1 w-full flex items-center justify-center gap-2 px-3 py-2 rounded-full bg-primary text-white text-sm font-bold disabled:opacity-50"
                     >
@@ -186,13 +221,15 @@ const Map = () => {
         <div className="flex items-center gap-2 text-sm text-on-surface-variant">
           <FiUserPlus className="text-primary shrink-0" size={16} />
           <span>
-            {possibleMatchesCount} possible match{possibleMatchesCount === 1 ? '' : 'es'} nearby
+            {possibleMatchesCount} possible match
+            {possibleMatchesCount === 1 ? '' : 'es'} nearby
           </span>
         </div>
         <div className="flex items-center gap-2 text-sm text-on-surface-variant">
           <LuUsers className="text-secondary shrink-0" size={16} />
           <span>
-            {matchedPins.length} connection{matchedPins.length === 1 ? '' : 's'} nearby
+            {matchedPins.length} connection{matchedPins.length === 1 ? '' : 's'}{' '}
+            nearby
           </span>
         </div>
       </div>

@@ -1,11 +1,35 @@
 import { useAuth } from '../context/auth/useAuth';
-import { FiStar, FiLogOut } from 'react-icons/fi';
-import { FaEnvelope, FaUser } from 'react-icons/fa';
+import { FiStar, FiLogOut, FiMapPin, FiCalendar } from 'react-icons/fi';
+import { FaEdit, FaEnvelope, FaUser } from 'react-icons/fa';
 import { BsFileEarmarkTextFill } from 'react-icons/bs';
 import { IoCarSport } from 'react-icons/io5';
+import { useEffect, useState } from 'react';
+import type { Commute } from '../types/commute';
+import { listMyCommutes } from '../lib/commutes';
+import { FaRegCircle } from 'react-icons/fa6';
+import { FaClock } from 'react-icons/fa6';
+import { formatTime } from '../utils/formatTime';
+import { MdEmojiTransportation } from 'react-icons/md';
+import EditCommuteModal from '../components/userProfile/EditCommuteModal';
 
 const Profile = () => {
   const { user, logout } = useAuth();
+  const [myCommute, setMyCommute] = useState<Commute | null>(null);
+  const [isEditCommuteOpen, setIsEditCommuteOpen] = useState(false);
+
+  useEffect(() => {
+    if (!user) return;
+
+    const load = async () => {
+      try {
+        const commutes = await listMyCommutes();
+        setMyCommute(commutes[0] ?? null);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    load();
+  }, [user]);
 
   if (!user) return null;
 
@@ -117,6 +141,78 @@ const Profile = () => {
             ))}
           </div>
         </div>
+      )}
+
+      {/* My Route */}
+
+      {myCommute && (
+        <div>
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-xs font-bold text-on-surface-variant tracking-wide mb-2">
+              MY ROUTE
+            </p>
+            <button
+              onClick={() => setIsEditCommuteOpen(true)}
+              className="text-primary hover:text-secondary transition-colors"
+            >
+              <FaEdit />
+            </button>
+          </div>
+
+          <div className="bg-white border border-outline-variant rounded-xl p-4 space-y-3">
+            <div className="flex gap-3">
+              <div className="flex flex-col items-center pt-1">
+                <FaRegCircle className="text-primary" size={12} />
+                <div className="w-0.5 flex-1 bg-outline-variant my-1.5" />
+                <FiMapPin className="text-primary" size={14} />
+              </div>
+
+              <div>
+                <p className="text-xs text-on-surface-variant ">FROM</p>
+                <p className="font-semibold text-on-surface text-2xl">
+                  {myCommute.origin.label}
+                </p>
+                <p className="text-xs text-on-surface-variant mt-2">TO</p>
+                <p className="font-semibold text-on-surface text-2xl">
+                  {myCommute.destination.label}
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 text-sm text-on-surface-variant pt-2 border-t border-outline-variant">
+              <FaClock size={14} className="fill-primary" />
+              <span>{formatTime(myCommute.departure_time)}</span>
+            </div>
+
+            <div className="flex items-center gap-2 text-sm text-on-surface-variant">
+              <FiCalendar size={14} className="text-primary" />
+              <span className="font-medium">
+                {myCommute.days_of_week
+                  .map((day) => day.charAt(0).toUpperCase() + day.slice(1, 3))
+                  .join(', ')}
+              </span>
+            </div>
+
+            {myCommute.modes && myCommute.modes.length > 0 && (
+              <div className="flex items-center gap-2 text-sm text-on-surface-variant">
+                <MdEmojiTransportation size={20} className="text-primary" />
+                <span>
+                  {myCommute.modes
+                    .map((mode) => mode.charAt(0).toUpperCase() + mode.slice(1))
+                    .join(', ')}
+                </span>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {isEditCommuteOpen && myCommute && (
+        <EditCommuteModal
+          commute={myCommute}
+          onClose={() => setIsEditCommuteOpen(false)}
+          onSaved={(updated) => setMyCommute(updated)}
+        />
       )}
 
       {/* Logout */}
