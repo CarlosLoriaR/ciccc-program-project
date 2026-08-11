@@ -5,7 +5,7 @@ import ProfileCard from '../components/ProfileCard';
 import type { User } from '../types/user';
 import type { Commute } from '../types/commute';
 import { discoverCommutes, listMyCommutes, type DiscoverCandidate } from '../lib/commutes';
-import { createMatch, respondToMatch } from '../lib/matches';
+import { createMatch } from '../lib/matches';
 
 // The discover endpoint only returns a subset of the other user's profile
 // (name, avatar, bio, interests, rating). ProfileCard only reads those fields,
@@ -71,17 +71,19 @@ const Discover = () => {
     if (!myCommute || !current || isConnecting) return;
     setIsConnecting(true);
     try {
-      if (current.pending_match_id) {
-        // They already requested us — "Connect" here accepts it instead of filing a
-        // second, duplicate request (which the backend would reject anyway).
-        await respondToMatch(current.pending_match_id, 'accept');
-        toast.success(`You matched with ${current.user_id.display_name || current.user_id.full_name}! You can now chat.`);
+      // If they already sent US a pending request, the backend accepts theirs instead
+      // of filing a second, opposite-direction one — so the status coming back tells us
+      // which actually happened, regardless of what this browser knew beforehand.
+      const result = await createMatch({
+        addressee_id: current.user_id._id,
+        requester_commute_id: myCommute._id,
+        addressee_commute_id: current._id,
+      });
+
+      if (result.status === 'accepted') {
+        const name = current.user_id.display_name || current.user_id.full_name;
+        toast.success(`You matched with ${name}! You can now chat.`);
       } else {
-        await createMatch({
-          addressee_id: current.user_id._id,
-          requester_commute_id: myCommute._id,
-          addressee_commute_id: current._id,
-        });
         toast.success('Connection request sent!');
       }
     } catch (error) {
