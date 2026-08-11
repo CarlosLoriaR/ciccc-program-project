@@ -69,23 +69,33 @@ export async function discoverCommutes(requesterId: string, params: DiscoverPara
 
   const relatedMatches = await MatchModel.find({
     $or: [{ requester_id: requesterId }, { addressee_id: requesterId }],
-  }).select('requester_id addressee_id');
+  }).select('requester_id addressee_id status');
 
   const excludedUserIds = new Set<string>([requesterId]);
+  // Someone who already sent ME a pending request should still show up in my own
+  // discover feed — otherwise neither side can ever see the other to act on it, since
+  // this swipe screen is the only place a match gets created or accepted. Hitting
+  // "Connect" on them there sends a request right back, which match.service.createMatch
+  // detects and auto-accepts (see the reverse-pending check there) rather than filing
+  // a second, opposite-direction match.
   for (const m of relatedMatches) {
-    excludedUserIds.add(m.requester_id.toString());
-    excludedUserIds.add(m.addressee_id.toString());
+    const iAmRequester = m.requester_id.toString() === requesterId;
+    const otherUserId = iAmRequester ? m.addressee_id.toString() : m.requester_id.toString();
+
+    if (m.status === 'pending' && !iAmRequester) continue;
+
+    excludedUserIds.add(otherUserId);
   }
 
   const filter = {
     is_active: true,
     user_id: { $nin: [...excludedUserIds].map((id) => new Types.ObjectId(id)) },
-    mode: base.mode,
+    modes: { $in: base.modes },
     ...nearQuery('origin', base.origin.coordinates, params.radiusKm),
     ...nearQuery('destination', base.destination.coordinates, params.radiusKm),
   };
 
-  const [items, total] = await Promise.all([
+  const [rawItems, total] = await Promise.all([
     CommuteModel.find(filter)
       .populate('user_id', 'full_name display_name avatar_url bio interests photos rating_avg rating_count total_rides')
       .skip(params.skip)
@@ -93,6 +103,11 @@ export async function discoverCommutes(requesterId: string, params: DiscoverPara
       .sort({ created_at: -1 }),
     CommuteModel.countDocuments(filter),
   ]);
+
+  // A commute can outlive its owning user if the user document was removed directly
+  // (e.g. manual DB edits) instead of through the app's own soft-delete flow — populate
+  // silently returns null for those, so drop them rather than hand a broken user to the client.
+  const items = rawItems.filter((item) => item.user_id != null);
 
   return toPagedResult(items, total, params);
 }

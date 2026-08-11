@@ -3,18 +3,22 @@ import { useNavigate } from 'react-router';
 import { useAuth } from '../context/auth/useAuth';
 import toast from 'react-hot-toast';
 import AvatarUpload from '../components/userProfile/AvatarUpload';
+import AddressAutocomplete from '../components/AddressAutocomplete';
 import { createCommute } from '../lib/commutes';
+import type { PlaceSuggestion } from '../lib/geocode';
 import WeekDaysSelector from '../components/userProfile/WeekDaysSelector';
+import TransportModeSelector from '../components/userProfile/TransportModeSelector';
 
 const Onboarding = () => {
   const { updateProfile } = useAuth();
   const navigate = useNavigate();
 
   const [avatarPreview, setAvatarPreview] = useState<string | undefined>();
-  const [origin, setOrigin] = useState('');
-  const [destination, setDestination] = useState('');
+  const [origin, setOrigin] = useState<PlaceSuggestion | null>(null);
+  const [destination, setDestination] = useState<PlaceSuggestion | null>(null);
   const [departureTime, setDepartureTime] = useState('');
   const [weekDays, setWeekDays] = useState<string[]>([]);
+  const [transportModes, setTransportModes] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -25,8 +29,8 @@ const Onboarding = () => {
       return;
     }
 
-    if (!origin.trim() || !destination.trim()) {
-      toast.error('Please fill in your route.');
+    if (!origin || !destination) {
+      toast.error('Please pick your From and To from the suggestions list.');
       return;
     }
 
@@ -40,20 +44,27 @@ const Onboarding = () => {
       return;
     }
 
+    if (transportModes.length === 0) {
+      toast.error('Please select at least one way you get there.');
+      return;
+    }
+
     setIsSubmitting(true);
     try {
       await updateProfile({ avatar_url: avatarPreview });
       await createCommute({
-        origin: { type: 'Point', coordinates: [0, 0], label: origin },
-        destination: { type: 'Point', coordinates: [0, 0], label: destination },
+        origin: { type: 'Point', coordinates: origin.coordinates, label: origin.label },
+        destination: { type: 'Point', coordinates: destination.coordinates, label: destination.label },
         departure_time: departureTime,
         // Backend expects lowercase day codes ('mon', 'tue', ...); the UI keeps the
         // capitalized labels ('Mon', 'Tue', ...) for display.
         days_of_week: weekDays.map((day) => day.toLowerCase()),
+        modes: transportModes.map((mode) => mode.toLowerCase()),
       });
       navigate('/discover');
     } catch (error) {
       console.error(error);
+      toast.error('Something went wrong setting up your commute.');
     } finally {
       setIsSubmitting(false);
     }
@@ -80,31 +91,9 @@ const Onboarding = () => {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-5">
-          <div>
-            <label className="block text-sm font-semibold text-on-surface mb-2">
-              From
-            </label>
-            <input
-              type="text"
-              placeholder="Downtown"
-              value={origin}
-              onChange={(e) => setOrigin(e.target.value)}
-              className="w-full px-4 py-3.5 bg-surface-container-low rounded-xl text-on-surface font-medium placeholder:text-outline placeholder:font-normal border border-transparent focus:border-primary focus:outline-none transition-colors"
-            />
-          </div>
+          <AddressAutocomplete label="From" placeholder="Downtown" onSelect={setOrigin} />
 
-          <div>
-            <label className="block text-sm font-semibold text-on-surface mb-2">
-              To
-            </label>
-            <input
-              type="text"
-              value={destination}
-              onChange={(e) => setDestination(e.target.value)}
-              placeholder="Burnaby"
-              className="w-full px-4 py-3.5 bg-surface-container-low rounded-xl text-on-surface font-medium placeholder:text-outline placeholder:font-normal border border-transparent focus:border-primary focus:outline-none transition-colors"
-            />
-          </div>
+          <AddressAutocomplete label="To" placeholder="Burnaby" onSelect={setDestination} />
 
           <div>
             <label className="block text-sm font-semibold text-on-surface mb-2">
@@ -123,6 +112,13 @@ const Onboarding = () => {
               Which days?
             </label>
             <WeekDaysSelector selected={weekDays} onChange={setWeekDays} />
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-on-surface mb-2">
+              How do you get there?
+            </label>
+            <TransportModeSelector selected={transportModes} onChange={setTransportModes} />
           </div>
 
           <button
