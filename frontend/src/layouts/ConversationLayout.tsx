@@ -3,8 +3,7 @@ import ConversationHeader from '../components/chats/ConversationHeader';
 import { useAuth } from '../context/auth/useAuth';
 import { useEffect, useState } from 'react';
 import { getConversationById } from '../lib/conversations';
-// //⚠️ TEMPORAL:ELIMINAR DESPUÉS DE CONECTAR
-// import { MOCK_CONVERSATIONS } from '../constants/chatMocks';
+import type { ConversationParticipant } from '../types/chat';
 
 const ConversationLayout = () => {
   const { conversationId } = useParams();
@@ -15,22 +14,26 @@ const ConversationLayout = () => {
   useEffect(() => {
     if (!conversationId || !user) return;
 
-    // // ⚠️ TEMPORAL: mock en vez de getConversationById() real
-    // const mock = MOCK_CONVERSATIONS.find((c) => c.id === conversationId);
-    // if (mock) {
-    //   setOtherName(mock.otherUser.display_name || mock.otherUser.full_name);
-    //   setOtherAvatar(mock.otherUser.avatar_url);
-    //   return;
-    // }
-
     const load = async () => {
       try {
         const data = await getConversationById(conversationId);
-        const other = data.conversation.participant_ids.find(
-          (p: { _id: string }) => p._id !== user?._id,
-        );
-        setOtherName(other?.display_name || other?.full_name || 'Chat');
-        setOtherAvatar(other?.avatar_url);
+        const conversationData =
+          'conversation' in data ? (data as any).conversation : data;
+        console.log('Conversation Data fetched:', conversationData);
+
+        if (
+          conversationData &&
+          Array.isArray(conversationData.participant_ids)
+        ) {
+          const other = conversationData.participant_ids.find(
+            (p: ConversationParticipant) => p._id !== user?._id,
+          );
+
+          if (other) {
+            setOtherName(other?.display_name || other?.full_name || 'Chat');
+            setOtherAvatar(other?.avatar_url);
+          }
+        }
       } catch (error) {
         console.error(error);
       }
@@ -39,9 +42,11 @@ const ConversationLayout = () => {
   }, [conversationId, user]);
 
   return (
-    <div className="min-h-screen flex flex-col bg-surface-container-low">
-      <ConversationHeader name={otherName} avatarUrl={otherAvatar} />
-      <main className="flex-1 flex flex-col">
+    <div className="h-screen overflow-hidden flex flex-col bg-surface-container-low">
+      <div className="shrink-0">
+        <ConversationHeader name={otherName} avatarUrl={otherAvatar} />
+      </div>
+      <main className="flex-1 overflow-hidden flex flex-col">
         <Outlet />
       </main>
     </div>

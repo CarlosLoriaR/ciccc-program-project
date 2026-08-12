@@ -1,17 +1,10 @@
 import { Link } from 'react-router';
-// import type { Conversation, Message } from '../../types/chat';
 import {
   listConversations,
   type ConversationSummary,
 } from '../../lib/conversations';
 import { useAuth } from '../../context/auth/useAuth';
 import { useEffect, useState } from 'react';
-// import { MOCK_CONVERSATIONS } from '../../constants/chatMocks';
-
-// type ConversationEntry = {
-//   conversation: Conversation;
-//   lastMessage: Message | null;
-// };
 
 const ChatList = () => {
   const { user } = useAuth();
@@ -19,38 +12,6 @@ const ChatList = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // if (!user) {
-    //   setIsLoading(false);
-    //   return;
-    // }
-
-    // // ⚠️ TEMPORAL: mock en vez de conversationList() real
-    // const mockEntries: ConversationEntry[] = MOCK_CONVERSATIONS.map((mock) => ({
-    //   conversation: {
-    //     _id: mock.id,
-    //     match_id: `match-${mock.id}`,
-    //     participant_ids: [
-    //       {
-    //         _id: user._id,
-    //         full_name: user.full_name,
-    //         display_name: user.display_name,
-    //         avatar_url: user.avatar_url,
-    //       },
-    //       mock.otherUser,
-    //     ],
-    //     created_at: new Date().toISOString(),
-    //   },
-    //   lastMessage: {
-    //     _id: `msg-${mock.id}`,
-    //     conversation_id: mock.id,
-    //     sender_id: mock.lastMessageSender,
-    //     body: mock.lastMessageBody,
-    //     attachments: [],
-    //     read_by: [],
-    //     created_at: new Date().toISOString(),
-    //   },
-    // }));
-
     const load = async () => {
       try {
         const data = await listConversations();
@@ -62,10 +23,7 @@ const ChatList = () => {
       }
     };
     load();
-
-    // setEntries(mockEntries);
-    // setIsLoading(false);
-  }, []); //para el mock lleva [user]
+  }, []);
 
   if (isLoading) {
     return (
