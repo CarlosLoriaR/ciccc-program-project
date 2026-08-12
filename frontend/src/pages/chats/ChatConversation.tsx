@@ -34,7 +34,7 @@ const ChatConversation = () => {
     socket.emit('conversation:join', { conversationId });
 
     const handleNewMessage = ({ message }: { message: Message }) => {
-      if (message.conversation_id !== conversationId) {
+      if (message.conversation_id === conversationId) {
         setMessages((prev) => {
           if (prev.some((m) => m._id === message._id)) return prev;
           return [...prev, message];
@@ -47,7 +47,7 @@ const ChatConversation = () => {
 
     return () => {
       socket.emit('conversation:leave', { conversationId });
-      socket.off('message: new', handleNewMessage);
+      socket.off('message:new', handleNewMessage);
     };
   }, [socket, conversationId]);
 
@@ -64,7 +64,7 @@ const ChatConversation = () => {
   };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-64px)]">
+    <div className="flex flex-col h-full">
       <div className="flex-1 overflow-y-auto p-4 space-y-3">
         {messages.map((message) => {
           const isOwn = message.sender_id === user?._id;
