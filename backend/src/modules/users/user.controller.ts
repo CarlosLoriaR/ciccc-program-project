@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { asyncHandler } from '../../common/utils/asyncHandler';
 import { noContent, ok } from '../../common/utils/apiResponse';
+import { BadRequestError } from '../../common/errors/httpErrors';
 import * as userService from './user.service';
 import { toPrivateUser, toPublicUser } from './user.mapper';
 
@@ -27,4 +28,12 @@ export const deleteMe = asyncHandler(async (req: Request, res: Response) => {
 export const getById = asyncHandler(async (req: Request, res: Response) => {
   const user = await userService.findUserById(req.params.id);
   ok(res, toPublicUser(user));
+});
+
+// Returns a persistent data: URI for the uploaded image — the caller then saves it via
+// PATCH /users/me (avatar_url) or in a commute/profile field, same as any other string URL.
+export const uploadPhoto = asyncHandler(async (req: Request, res: Response) => {
+  if (!req.file) throw new BadRequestError('No file uploaded');
+  const dataUri = `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}`;
+  ok(res, { url: dataUri });
 });

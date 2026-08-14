@@ -1,9 +1,11 @@
 import { useRef, useState } from 'react';
 import { IoCameraSharp } from 'react-icons/io5';
+import toast from 'react-hot-toast';
+import { uploadImage } from '../../lib/upload';
 
 type AvatarUploadProps = {
   currentAvatarUrl?: string;
-  onFileSelect: (file: File, previewUrl: string) => void;
+  onFileSelect: (url: string) => void;
 };
 
 const AvatarUpload = ({
@@ -14,14 +16,23 @@ const AvatarUpload = ({
   const [previewUrl, setPreviewUrl] = useState<string | undefined>(
     currentAvatarUrl,
   );
+  const [isUploading, setIsUploading] = useState(false);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const url = URL.createObjectURL(file);
-    setPreviewUrl(url);
-    onFileSelect(file, url);
+    setIsUploading(true);
+    try {
+      const url = await uploadImage(file);
+      setPreviewUrl(url);
+      onFileSelect(url);
+    } catch (error) {
+      console.error(error);
+      toast.error('Could not upload that photo.');
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   return (
@@ -35,7 +46,8 @@ const AvatarUpload = ({
       <button
         type="button"
         onClick={() => fileInputRef.current?.click()}
-        className="absolute bottom-0 right-0 bg-primary text-on-primary rounded-full p-2 border-2 border-white hover:bg-secondary transition-colors"
+        disabled={isUploading}
+        className="absolute bottom-0 right-0 bg-primary text-on-primary rounded-full p-2 border-2 border-white hover:bg-secondary transition-colors disabled:opacity-50"
       >
         <IoCameraSharp size={20} />
       </button>
@@ -46,6 +58,11 @@ const AvatarUpload = ({
         onChange={handleFileChange}
         className="hidden"
       />
+      {isUploading && (
+        <div className="absolute inset-0 rounded-full bg-black/40 flex items-center justify-center text-white text-xs font-semibold">
+          Uploading...
+        </div>
+      )}
     </div>
   );
 };

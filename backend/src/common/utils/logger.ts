@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 type LogMeta = Record<string, unknown>;
 
 function line(level: string, meta: LogMeta | undefined, message: string): string {

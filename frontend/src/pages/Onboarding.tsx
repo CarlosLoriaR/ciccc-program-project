@@ -83,11 +83,7 @@ const Onboarding = () => {
         </div>
 
         <div className="flex justify-center mb-6">
-          <AvatarUpload
-            onFileSelect={(_file, url) => {
-              setAvatarPreview(url);
-            }}
-          />
+          <AvatarUpload onFileSelect={setAvatarPreview} />
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-5">

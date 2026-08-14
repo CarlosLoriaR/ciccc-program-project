@@ -9,7 +9,7 @@ import {
   listMyCommutes,
   type DiscoverCandidate,
 } from '../lib/commutes';
-import { createMatch } from '../lib/matches';
+import { createMatch, respondToMatch } from '../lib/matches';
 
 // The discover endpoint only returns a subset of the other user's profile
 // (name, avatar, bio, interests, rating). ProfileCard only reads those fields,

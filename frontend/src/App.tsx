@@ -38,12 +38,6 @@ function App() {
             <Route path="discover" element={<Discover />} />
             <Route path="schedules" element={<Schedules />} />
           </Route>
-          {/* Private Routes */}
-          <Route element={<PageLayout />}>
-            <Route path="map" element={<Map />} />
-            <Route path="discover" element={<Discover />} />
-            <Route path="schedules" element={<Schedules />} />
-          </Route>
 
           <Route element={<ProfileLayout />}>
             <Route path="profile" element={<Profile />} />

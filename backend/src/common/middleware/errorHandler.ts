@@ -1,11 +1,11 @@
 import { NextFunction, Request, Response } from 'express';
 import { ZodError } from 'zod';
 import mongoose from 'mongoose';
+import { MulterError } from 'multer';
 import { AppError } from '../errors/AppError';
 import { logger } from '../utils/logger';
 import { isProduction } from '../../config/env';
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function errorHandler(err: unknown, req: Request, res: Response, _next: NextFunction): void {
   if (err instanceof AppError) {
     res.status(err.statusCode).json({
@@ -27,6 +27,15 @@ export function errorHandler(err: unknown, req: Request, res: Response, _next: N
     res.status(400).json({
       success: false,
       error: { message: `Invalid identifier: ${err.path}`, code: 'BAD_REQUEST' },
+    });
+    return;
+  }
+
+  if (err instanceof MulterError) {
+    const message = err.code === 'LIMIT_FILE_SIZE' ? 'Image is too large (max 2MB)' : err.message;
+    res.status(400).json({
+      success: false,
+      error: { message, code: 'BAD_REQUEST' },
     });
     return;
   }

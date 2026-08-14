@@ -1,5 +1,7 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { FiPlus, FiX } from 'react-icons/fi';
+import toast from 'react-hot-toast';
+import { uploadImage } from '../../lib/upload';
 
 const MAX_PHOTOS = 3;
 
@@ -10,15 +12,23 @@ type PhotoGalleryUploadProps = {
 
 const PhotoGalleryUpload = ({ photos, onChange }: PhotoGalleryUploadProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isUploading, setIsUploading] = useState(false);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
+    e.target.value = '';
     if (!file) return;
 
-    const url = URL.createObjectURL(file);
-    onChange([...photos, url]);
-
-    e.target.value = '';
+    setIsUploading(true);
+    try {
+      const url = await uploadImage(file);
+      onChange([...photos, url]);
+    } catch (error) {
+      console.error(error);
+      toast.error('Could not upload that photo.');
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   const removePhoto = (index: number) => {
@@ -51,9 +61,14 @@ const PhotoGalleryUpload = ({ photos, onChange }: PhotoGalleryUploadProps) => {
           <button
             type="button"
             onClick={() => fileInputRef.current?.click()}
-            className="aspect-square rounded-xl border-2 border-dashed border-outline-variant flex items-center justify-center text-on-surface-variant hover:border-secondary hover:text-primary transition-colors"
+            disabled={isUploading}
+            className="aspect-square rounded-xl border-2 border-dashed border-outline-variant flex items-center justify-center text-on-surface-variant hover:border-secondary hover:text-primary transition-colors disabled:opacity-50"
           >
-            <FiPlus />
+            {isUploading ? (
+              <span className="text-xs">Uploading...</span>
+            ) : (
+              <FiPlus />
+            )}
           </button>
         )}
       </div>
