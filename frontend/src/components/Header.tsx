@@ -1,6 +1,7 @@
 import { FaUsers } from 'react-icons/fa';
 import { useAuth } from '../context/auth/useAuth';
 import { Link } from 'react-router';
+import Notifications from './Notifications';
 
 const Header = () => {
   const { user } = useAuth();
@@ -15,13 +16,17 @@ const Header = () => {
         </div>
       </Link>
 
-      <Link to="/profile">
-        <img
-          src={user.avatar_url || 'https://placehold.co/200x200'}
-          alt={user.display_name}
-          className="w-10 h-10 rounded-full object-cover border border-outline-variant"
-        />
-      </Link>
+      <div className="flex items-center gap-3">
+        <Notifications />
+
+        <Link to="/profile">
+          <img
+            src={user.avatar_url || 'https://placehold.co/200x200'}
+            alt={user.display_name}
+            className="w-10 h-10 rounded-full object-cover border border-outline-variant"
+          />
+        </Link>
+      </div>
     </header>
   );
 };

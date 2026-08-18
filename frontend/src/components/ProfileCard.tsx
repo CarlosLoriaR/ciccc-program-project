@@ -30,11 +30,11 @@ const ProfileCard = ({
   const [photoIndex, setPhotoIndex] = useState(0);
 
   const goNext = () => {
-    setPhotoIndex((i) => Math.min(i + 1, photos.length - 1));
+    setPhotoIndex((i) => (i + 1) % photos.length);
   };
 
   const goPrev = () => {
-    setPhotoIndex((i) => Math.max(i - 1, 0));
+    setPhotoIndex((i) => (i - 1 + photos.length) % photos.length);
   };
   return (
     <div className="rounded-lg border border-outline-variant overflow-hidden bg-white mx-auto md:w-[92%]">
@@ -68,17 +68,17 @@ const ProfileCard = ({
             <button
               type="button"
               onClick={goPrev}
-              className="absolute left-0 top-0 w-1/2 h-full"
+              className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/40 text-white rounded-full p-1.5 hover:bg-white/60 hover:text-secondary transition-colors z-10"
             >
-              <MdOutlineKeyboardArrowLeft />
+              <MdOutlineKeyboardArrowLeft size={22} />
             </button>
 
             <button
               type="button"
               onClick={goNext}
-              className="absolute right-0 top-0 w-1/2 h-full"
+              className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/40 text-white rounded-full p-1.5 hover:bg-white/60 hover:text-secondary transition-colors z-10"
             >
-              <MdOutlineKeyboardArrowRight />
+              <MdOutlineKeyboardArrowRight size={22} />
             </button>
           </>
         )}

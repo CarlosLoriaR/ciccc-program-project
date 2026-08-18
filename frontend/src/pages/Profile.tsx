@@ -11,11 +11,15 @@ import { FaClock } from 'react-icons/fa6';
 import { formatTime } from '../utils/formatTime';
 import { MdEmojiTransportation } from 'react-icons/md';
 import EditCommuteModal from '../components/userProfile/EditCommuteModal';
+import toast from 'react-hot-toast';
+import AvatarUpload from '../components/userProfile/AvatarUpload';
+import CompleteProfileModal from '../components/userProfile/CompleteProfileModal';
 
 const Profile = () => {
-  const { user, logout } = useAuth();
+  const { user, logout, updateProfile } = useAuth();
   const [myCommute, setMyCommute] = useState<Commute | null>(null);
   const [isEditCommuteOpen, setIsEditCommuteOpen] = useState(false);
+  const [isEditInfoOpen, setIsEditInfoOpen] = useState(false);
 
   useEffect(() => {
     if (!user) return;
@@ -33,16 +37,22 @@ const Profile = () => {
 
   if (!user) return null;
 
+  const handleAvatarChange = async (url: string) => {
+    try {
+      await updateProfile({ avatar_url: url });
+      toast.success('Profile photo updated!');
+    } catch (erro) {
+      console.error(erro);
+    }
+  };
+
   return (
     <div className="p-4 max-w-md mx-auto space-y-6 md:max-w-3xl">
       <div className="flex flex-col items-center text-center">
-        <div className="relative">
-          <img
-            src={user.avatar_url || 'https://placehold.co/200x200'}
-            alt={user.display_name}
-            className="w-28 h-28 rounded-full object-cover border-4 border-primary-container"
-          />
-        </div>
+        <AvatarUpload
+          currentAvatarUrl={user.avatar_url}
+          onFileSelect={handleAvatarChange}
+        />
         <h2 className="text-xl font-bold text-on-surface mt-3">
           {user.full_name}
         </h2>
@@ -92,9 +102,18 @@ const Profile = () => {
 
       {/* Personal Info */}
       <div>
-        <p className="text-xs font-bold text-on-surface-variant tracking-wide mb-2">
-          PERSONAL INFO
-        </p>
+        <div className="flex items-center justify-between mb-2">
+          <p className="text-xs font-bold text-on-surface-variant tracking-wide mb-2">
+            PERSONAL INFO
+          </p>
+          <button
+            className="text-primary hover:text-secondary transition-colors"
+            onClick={() => setIsEditInfoOpen(true)}
+          >
+            <FaEdit />
+          </button>
+        </div>
+
         <div className="bg-white border border-outline-variant rounded-xl divide-y divide-outline-variant">
           <div className="flex items-start gap-3 p-4">
             <FaUser size={16} className="fill-primary mt-0.5" />
@@ -213,6 +232,10 @@ const Profile = () => {
           onClose={() => setIsEditCommuteOpen(false)}
           onSaved={(updated) => setMyCommute(updated)}
         />
+      )}
+
+      {isEditInfoOpen && (
+        <CompleteProfileModal onClose={() => setIsEditInfoOpen(false)} />
       )}
 
       {/* Logout */}

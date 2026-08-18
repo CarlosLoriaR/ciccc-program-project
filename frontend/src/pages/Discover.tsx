@@ -34,6 +34,7 @@ function toCardUser(candidate: DiscoverCandidate): User {
     bio: partial.bio,
     interests: partial.interests,
     total_rides: partial.total_rides,
+    photos: partial.photos,
   };
 }
 

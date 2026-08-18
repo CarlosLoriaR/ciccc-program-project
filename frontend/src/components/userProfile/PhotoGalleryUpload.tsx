@@ -3,7 +3,7 @@ import { FiPlus, FiX } from 'react-icons/fi';
 import toast from 'react-hot-toast';
 import { uploadImage } from '../../lib/upload';
 
-const MAX_PHOTOS = 3;
+const MAX_PHOTOS = 5;
 
 type PhotoGalleryUploadProps = {
   photos: string[];
