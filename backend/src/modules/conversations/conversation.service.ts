@@ -13,8 +13,17 @@ export async function createConversationForMatch(match: IMatch): Promise<IConver
   });
 }
 
+// participant_ids is typed as ObjectId[], but after .populate() each entry is actually a
+// full user document at runtime (TS doesn't track that shape change) — a populated
+// document's .toString() returns "[object Object]", not its id, so comparing it directly
+// against a plain id string always fails. Read ._id off populated entries when present.
+function participantId(entry: IConversation['participant_ids'][number]): string {
+  const populated = entry as unknown as { _id?: { toString(): string } };
+  return (populated._id ?? entry).toString();
+}
+
 function assertParticipant(conversation: IConversation, userId: string): void {
-  if (!conversation.participant_ids.some((id) => id.toString() === userId)) {
+  if (!conversation.participant_ids.some((entry) => participantId(entry) === userId)) {
     throw new ForbiddenError('You are not part of this conversation');
   }
 }

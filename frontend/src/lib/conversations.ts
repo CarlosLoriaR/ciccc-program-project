@@ -1,5 +1,5 @@
 import api from './api';
-import type { Message } from '../types/chat';
+import type { ConversationParticipant, Message } from '../types/chat';
 
 export type ConversationSummary = {
   conversation: {
@@ -26,8 +26,21 @@ export type ConversationSummary = {
 //   return res.data;
 // };
 
-export const getConversationById = async (id: string) => {
-  const res = await api.get(`/conversations/${id}`);
+export type ConversationDetail = {
+  conversation: {
+    _id: string;
+    match_id: string;
+    participant_ids: ConversationParticipant[];
+    last_message_at?: string;
+  };
+  counterpart: {
+    user: { _id: string; full_name: string; display_name?: string; avatar_url?: string } | null;
+    commute: unknown | null;
+  };
+};
+
+export const getConversationById = async (id: string): Promise<ConversationDetail> => {
+  const res = await api.get<ConversationDetail>(`/conversations/${id}`);
   return res.data;
 };
 

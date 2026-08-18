@@ -4,10 +4,13 @@ import {
   type ConversationSummary,
 } from '../../lib/conversations';
 import { useAuth } from '../../context/auth/useAuth';
+import { useSocket } from '../../context/socket/useSocket';
 import { useEffect, useState } from 'react';
+import type { Message } from '../../types/chat';
 
 const ChatList = () => {
   const { user } = useAuth();
+  const { socket } = useSocket();
   const [entries, setEntries] = useState<ConversationSummary[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -24,6 +27,31 @@ const ChatList = () => {
     };
     load();
   }, []);
+
+  useEffect(() => {
+    if (!socket) return;
+
+    const handleConversationUpdated = ({
+      conversationId,
+      lastMessage,
+    }: {
+      conversationId: string;
+      lastMessage: Message;
+    }) => {
+      setEntries((prev) => {
+        const index = prev.findIndex((e) => e.conversation._id === conversationId);
+        if (index === -1) return prev; // a brand-new conversation — picked up on next full reload/visit
+        const updated = { ...prev[index], lastMessage };
+        const rest = prev.filter((_, i) => i !== index);
+        return [updated, ...rest]; // bump the most recently active conversation to the top
+      });
+    };
+
+    socket.on('conversation:updated', handleConversationUpdated);
+    return () => {
+      socket.off('conversation:updated', handleConversationUpdated);
+    };
+  }, [socket]);
 
   if (isLoading) {
     return (

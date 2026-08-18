@@ -3,7 +3,6 @@ import ConversationHeader from '../components/chats/ConversationHeader';
 import { useAuth } from '../context/auth/useAuth';
 import { useEffect, useState } from 'react';
 import { getConversationById } from '../lib/conversations';
-import type { ConversationParticipant } from '../types/chat';
 
 const ConversationLayout = () => {
   const { conversationId } = useParams();
@@ -17,22 +16,13 @@ const ConversationLayout = () => {
     const load = async () => {
       try {
         const data = await getConversationById(conversationId);
-        const conversationData =
-          'conversation' in data ? (data as any).conversation : data;
-        console.log('Conversation Data fetched:', conversationData);
+        const other = data.conversation.participant_ids.find(
+          (p) => p._id !== user?._id,
+        );
 
-        if (
-          conversationData &&
-          Array.isArray(conversationData.participant_ids)
-        ) {
-          const other = conversationData.participant_ids.find(
-            (p: ConversationParticipant) => p._id !== user?._id,
-          );
-
-          if (other) {
-            setOtherName(other?.display_name || other?.full_name || 'Chat');
-            setOtherAvatar(other?.avatar_url);
-          }
+        if (other) {
+          setOtherName(other.display_name || other.full_name || 'Chat');
+          setOtherAvatar(other.avatar_url);
         }
       } catch (error) {
         console.error(error);
