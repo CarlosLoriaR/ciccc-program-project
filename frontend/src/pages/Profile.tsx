@@ -37,9 +37,9 @@ const Profile = () => {
 
   if (!user) return null;
 
-  const handleAvatarChange = async (_file: File, previewUrl: string) => {
+  const handleAvatarChange = async (url: string) => {
     try {
-      await updateProfile({ avatar_url: previewUrl });
+      await updateProfile({ avatar_url: url });
       toast.success('Profile photo updated!');
     } catch (erro) {
       console.error(erro);
