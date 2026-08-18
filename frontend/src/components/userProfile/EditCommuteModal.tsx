@@ -6,6 +6,7 @@ import type { Commute } from '../../types/commute';
 import { useState } from 'react';
 import type { PlaceSuggestion } from '../../lib/geocode';
 import { updateCommute } from '../../lib/commutes';
+import { shortenLocationLabel } from '../../utils/formatLocation';
 import toast from 'react-hot-toast';
 
 const DISMISS_KEY = 'profileReminderDismissed';
@@ -91,7 +92,8 @@ const EditCommuteModal = ({
         <div className="text-center mb-6">
           <h1 className="text-2xl font-bold text-primary">Edit your route</h1>
           <p className="text-on-surface-variant mt-1 text-sm font-semibold">
-            Current: {commute.origin.label} → {commute.destination.label}{' '}
+            Current: {shortenLocationLabel(commute.origin.label)} →{' '}
+            {shortenLocationLabel(commute.destination.label)}{' '}
           </p>
         </div>
 

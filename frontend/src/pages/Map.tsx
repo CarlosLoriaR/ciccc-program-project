@@ -17,6 +17,7 @@ import { listConversations } from '../lib/conversations';
 import { useAuth } from '../context/auth/useAuth';
 import { distanceKm } from '../lib/geo';
 import { selfIcon, candidateIcon } from '../lib/mapIcons';
+import { shortenLocationLabel } from '../utils/formatLocation';
 
 const RADIUS_KM = 10;
 
@@ -143,7 +144,7 @@ const Map = () => {
           />
 
           <Marker position={center} icon={selfIcon}>
-            <Popup>You — {myCommute.origin.label}</Popup>
+            <Popup>You — {shortenLocationLabel(myCommute.origin.label)}</Popup>
           </Marker>
 
           {matchedPins.map((pin) => {
@@ -184,9 +185,11 @@ const Map = () => {
                         <FiMapPin className="text-primary shrink-0" size={12} />
                       </div>
                       <div className="min-w-0">
-                        <p className="truncate">{pin.commute.origin.label}</p>
+                        <p className="truncate">
+                          {shortenLocationLabel(pin.commute.origin.label)}
+                        </p>
                         <p className="mt-2.5 truncate">
-                          {pin.commute.destination.label}
+                          {shortenLocationLabel(pin.commute.destination.label)}
                         </p>
                       </div>
                     </div>

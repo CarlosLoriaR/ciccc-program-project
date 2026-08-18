@@ -15,12 +15,12 @@ const NotificationContextProvider = ({ children }: { children: ReactNode }) => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
 
   useEffect(() => {
-    if (!isAuthenticated) {
-      setNotifications([]);
-      return;
-    }
-
     const load = async () => {
+      if (!isAuthenticated) {
+        setNotifications([]);
+        return;
+      }
+
       try {
         const result = await listNotifications();
         setNotifications(

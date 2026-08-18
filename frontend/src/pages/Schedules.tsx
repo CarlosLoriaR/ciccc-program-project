@@ -9,6 +9,7 @@ import type { Commute } from '../types/commute';
 import { getCommuteById, listMyCommutes } from '../lib/commutes';
 import { listMatches } from '../lib/matches';
 import { formatTime } from '../utils/formatTime';
+import { shortenLocationLabel } from '../utils/formatLocation';
 import { FaRegCalendarAlt } from 'react-icons/fa';
 
 const Schedules = () => {
@@ -34,7 +35,7 @@ const Schedules = () => {
             id: `solo-${day}`,
             date: nextDateForDay(day),
             timeLabel: formatTime(commute.departure_time),
-            routeLabel: `${commute.origin.label} to ${commute.destination.label}`,
+            routeLabel: `${shortenLocationLabel(commute.origin.label)} to ${shortenLocationLabel(commute.destination.label)}`,
           }));
           setEntries(solo);
           return;
@@ -61,7 +62,7 @@ const Schedules = () => {
                 id: `${match._id}-${day}`,
                 date: nextDateForDay(day),
                 timeLabel: formatTime(commute.departure_time),
-                routeLabel: `${commute.origin.label} to ${commute.destination.label}`,
+                routeLabel: `${shortenLocationLabel(commute.origin.label)} to ${shortenLocationLabel(commute.destination.label)}`,
                 withName: otherUser.display_name || otherUser.full_name,
                 avatarUrl: otherUser.avatar_url,
               });

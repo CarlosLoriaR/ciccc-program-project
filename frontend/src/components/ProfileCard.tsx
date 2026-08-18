@@ -6,6 +6,7 @@ import { LuMessageCircleMore } from 'react-icons/lu';
 import { IoCarSport } from 'react-icons/io5';
 import { useState } from 'react';
 import { formatTime } from '../utils/formatTime';
+import { shortenLocationLabel } from '../utils/formatLocation';
 import { FaCalendarAlt } from 'react-icons/fa';
 import {
   MdOutlineKeyboardArrowLeft,
@@ -105,11 +106,11 @@ const ProfileCard = ({
             <div>
               <p className="text-xs text-primary font-bold">FROM</p>
               <p className="font-bold text-on-surface text-2xl">
-                {commute.origin.label}
+                {shortenLocationLabel(commute.origin.label)}
               </p>
               <p className="text-xs text-primary font-bold mt-2">TO</p>
               <p className="font-bold text-on-surface text-2xl">
-                {commute.destination.label}
+                {shortenLocationLabel(commute.destination.label)}
               </p>
             </div>
           </div>

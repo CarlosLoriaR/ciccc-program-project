@@ -9,6 +9,7 @@ import { listMyCommutes } from '../lib/commutes';
 import { FaRegCircle } from 'react-icons/fa6';
 import { FaClock } from 'react-icons/fa6';
 import { formatTime } from '../utils/formatTime';
+import { shortenLocationLabel } from '../utils/formatLocation';
 import { MdEmojiTransportation } from 'react-icons/md';
 import EditCommuteModal from '../components/userProfile/EditCommuteModal';
 import toast from 'react-hot-toast';
@@ -189,11 +190,11 @@ const Profile = () => {
               <div>
                 <p className="text-xs text-on-surface-variant ">FROM</p>
                 <p className="font-semibold text-on-surface text-2xl">
-                  {myCommute.origin.label}
+                  {shortenLocationLabel(myCommute.origin.label)}
                 </p>
                 <p className="text-xs text-on-surface-variant mt-2">TO</p>
                 <p className="font-semibold text-on-surface text-2xl">
-                  {myCommute.destination.label}
+                  {shortenLocationLabel(myCommute.destination.label)}
                 </p>
               </div>
             </div>
