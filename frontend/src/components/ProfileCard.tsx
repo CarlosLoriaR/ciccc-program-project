@@ -37,7 +37,7 @@ const ProfileCard = ({
     setPhotoIndex((i) => (i - 1 + photos.length) % photos.length);
   };
   return (
-    <div className="rounded-lg border border-outline-variant overflow-hidden bg-white mx-auto md:w-[92%]">
+    <div className="rounded-lg border border-outline-variant overflow-hidden bg-white mx-auto md:w-2xl">
       {/* Imgs + name */}
       <div className="relative h-96">
         <img
