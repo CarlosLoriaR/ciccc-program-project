@@ -29,17 +29,6 @@ const Schedules = () => {
 
         const acceptedMatches = await listMatches({ status: 'accepted' });
 
-        if (acceptedMatches.length === 0) {
-          const solo = commute.days_of_week.map((day) => ({
-            id: `solo-${day}`,
-            date: nextDateForDay(day),
-            timeLabel: formatTime(commute.departure_time),
-            routeLabel: `${commute.origin.label} to ${commute.destination.label}`,
-          }));
-          setEntries(solo);
-          return;
-        }
-
         const matchEntries: ScheduleEntry[] = [];
         for (const match of acceptedMatches) {
           const isRequester = match.requester_id._id === user._id;
@@ -132,7 +121,8 @@ const Schedules = () => {
 
       {groups.length === 0 && (
         <p className="text-center text-on-surface-variant">
-          No upcoming commutes this week.
+          No upcoming commutes with your connections this week. Match with
+          someone on Discover to see them here!
         </p>
       )}
 
