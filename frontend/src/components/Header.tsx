@@ -8,7 +8,7 @@ const Header = () => {
   if (!user) return null;
 
   return (
-    <header className="flex items-center justify-between px-4 py-3 border-b border-outline-variant bg-surface-container-low">
+    <header className="relative z-[1000] flex items-center justify-between px-4 py-3 border-b border-outline-variant bg-surface-container-low">
       <Link to="/discover">
         <div className="flex items-center gap-2">
           <FaUsers size={24} className="text-primary" />

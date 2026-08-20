@@ -3,6 +3,8 @@ import { CommuteModel } from '../commutes/commute.model';
 import { BadRequestError, ConflictError, ForbiddenError, NotFoundError } from '../../common/errors/httpErrors';
 import { CreateMatchInput, ListMatchesQuery, RespondMatchInput } from './match.validation';
 import { createConversationForMatch } from '../conversations/conversation.service';
+import { ConversationModel } from '../conversations/conversation.model';
+import { MessageModel } from '../messages/message.model';
 import { notify } from '../notifications/notification.service';
 
 async function acceptMatch(match: IMatch): Promise<IMatch> {
@@ -112,11 +114,26 @@ export async function respondToMatch(matchId: string, userId: string, input: Res
   return match;
 }
 
+// Covers two different actions under one name: withdrawing your own pending request,
+// and unmatching someone you're already connected with — either participant can do
+// either, since both are just "I no longer want this connection to exist."
 export async function cancelMatch(matchId: string, userId: string): Promise<void> {
   const match = await findParticipantMatch(matchId, userId);
-  if (match.requester_id.toString() !== userId) throw new ForbiddenError('Only the requester can cancel');
-  if (match.status !== 'pending') throw new ConflictError('Only pending matches can be cancelled');
+  if (match.status !== 'pending' && match.status !== 'accepted') {
+    throw new ConflictError('This match has already been resolved');
+  }
 
+  const wasAccepted = match.status === 'accepted';
   match.status = 'cancelled';
   await match.save();
+
+  if (wasAccepted) {
+    // Unmatching removes the conversation entirely, not just marks it inactive — an
+    // undone match shouldn't leave a chat thread that still looks usable.
+    const conversation = await ConversationModel.findOne({ match_id: match._id });
+    if (conversation) {
+      await MessageModel.deleteMany({ conversation_id: conversation._id });
+      await conversation.deleteOne();
+    }
+  }
 }

@@ -72,7 +72,7 @@ const Notifications = () => {
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-80 max-w-[90vw] bg-surface-container-low border border-outline-variant rounded-2xl shadow-xl z-50 overflow-hidden">
+        <div className="absolute right-0 mt-2 w-80 max-w-[90vw] bg-surface-container-low border border-outline-variant rounded-2xl shadow-xl z-[1000] overflow-hidden">
           <div className="flex items-center justify-between px-4 py-3 border-b border-outline-variant">
             <p className="font-bold text-on-surface">Notifications</p>
             {unreadCount > 0 && (

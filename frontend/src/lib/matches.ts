@@ -50,3 +50,9 @@ export const respondToMatch = async (
   const res = await api.patch<Match>(`/matches/${matchId}/respond`, { action });
   return res.data;
 };
+
+// Works for withdrawing a pending request you sent, or unmatching an existing
+// connection — either participant can call this either way.
+export const cancelMatch = async (matchId: string): Promise<void> => {
+  await api.delete(`/matches/${matchId}`);
+};

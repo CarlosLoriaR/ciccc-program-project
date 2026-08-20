@@ -1,8 +1,7 @@
 import { useAuth } from '../context/auth/useAuth';
-import { FiStar, FiLogOut, FiMapPin, FiCalendar } from 'react-icons/fi';
+import { FiLogOut, FiMapPin, FiCalendar } from 'react-icons/fi';
 import { FaEdit, FaEnvelope, FaUser } from 'react-icons/fa';
 import { BsFileEarmarkTextFill } from 'react-icons/bs';
-import { IoCarSport } from 'react-icons/io5';
 import { useEffect, useState } from 'react';
 import type { Commute } from '../types/commute';
 import { listMyCommutes } from '../lib/commutes';
@@ -57,29 +56,6 @@ const Profile = () => {
         <h2 className="text-xl font-bold text-on-surface mt-3">
           {user.full_name}
         </h2>
-      </div>
-
-      {/* Stats */}
-      <div className="grid grid-cols-2 gap-3">
-        <div className="bg-white border border-outline-variant rounded-xl p-4 text-center">
-          <p className="text-2xl font-bold text-primary flex items-center justify-center gap-1">
-            <IoCarSport size={22} className="fill-primary mt-0.5" />
-            {user.total_rides ?? 0}
-          </p>
-          <p className="text-xs text-on-surface-variant mt-1 font-semibold">
-            Rides
-          </p>
-        </div>
-
-        <div className="bg-white border border-outline-variant rounded-xl p-4 text-center">
-          <p className="text-2xl font-bold text-primary flex items-center justify-center gap-1">
-            <FiStar size={18} className="fill-primary mt-0.5" />
-            {user.rating_avg}
-          </p>
-          <p className="text-xs text-on-surface-variant mt-1 font-semibold">
-            Rating
-          </p>
-        </div>
       </div>
 
       {/* Photos */}

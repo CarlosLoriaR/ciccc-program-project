@@ -1,12 +1,18 @@
 import { useNavigate } from 'react-router';
 import { MdKeyboardArrowLeft } from 'react-icons/md';
+import { FiUserX } from 'react-icons/fi';
 
 type ConversationHeaderProps = {
   name: string;
   avatarUrl?: string;
+  onUnmatch?: () => void;
 };
 
-const ConversationHeader = ({ name, avatarUrl }: ConversationHeaderProps) => {
+const ConversationHeader = ({
+  name,
+  avatarUrl,
+  onUnmatch,
+}: ConversationHeaderProps) => {
   const navigate = useNavigate();
 
   return (
@@ -23,7 +29,17 @@ const ConversationHeader = ({ name, avatarUrl }: ConversationHeaderProps) => {
         alt={name}
         className="w-9 h-9 rounded-full object-cover"
       />
-      <p className="font-semibold text-black">{name}</p>
+      <p className="font-semibold text-black flex-1">{name}</p>
+
+      {onUnmatch && (
+        <button
+          onClick={onUnmatch}
+          title="Unmatch"
+          className="text-on-surface-variant hover:text-error transition-colors"
+        >
+          <FiUserX size={20} />
+        </button>
+      )}
     </header>
   );
 };
