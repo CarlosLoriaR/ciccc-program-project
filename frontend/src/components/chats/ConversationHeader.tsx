@@ -19,7 +19,7 @@ const ConversationHeader = ({
     <header className="flex items-center gap-3 px-4 py-3 border-b border-outline-variant bg-surface-container-high">
       <button
         onClick={() => navigate('/chats')}
-        className="text-primary hover:text-secondary transition-colors"
+        className="text-primary hover:text-secondary transition-colors md:hidden"
       >
         <MdKeyboardArrowLeft size={22} />
       </button>

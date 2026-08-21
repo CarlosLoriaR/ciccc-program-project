@@ -8,7 +8,11 @@ import { useSocket } from '../../context/socket/useSocket';
 import { useEffect, useState } from 'react';
 import type { Message } from '../../types/chat';
 
-const ChatList = () => {
+type ChatListProps = {
+  activeConversationId?: string;
+};
+
+const ChatList = ({ activeConversationId }: ChatListProps) => {
   const { user } = useAuth();
   const { socket } = useSocket();
   const [entries, setEntries] = useState<ConversationSummary[]>([]);
@@ -69,16 +73,21 @@ const ChatList = () => {
   }
 
   return (
-    <div className="max-w-md mx-auto md:max-w-2xl divide-y divide-outline-variant ">
+    <div className="divide-y divide-outline-variant">
       {entries.map(({ conversation, lastMessage }) => {
         const otherParticipant = conversation.participant_ids.find(
           (p) => p._id !== user?._id,
         );
+        const isActive = conversation._id === activeConversationId;
         return (
           <Link
             to={`/chats/${conversation._id}`}
             key={conversation._id}
-            className="flex items-center gap-3 p-4 rounded-2xl  hover:bg-surface-container transition-colors"
+            className={`flex items-center gap-3 p-4 transition-colors ${
+              isActive
+                ? 'bg-primary-container'
+                : 'hover:bg-surface-container'
+            }`}
           >
             <img
               src={otherParticipant?.avatar_url}

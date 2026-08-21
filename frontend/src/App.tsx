@@ -10,10 +10,7 @@ import Discover from './pages/Discover';
 import Schedules from './pages/Schedules';
 import Onboarding from './pages/Onboarding';
 import ProfileLayout from './layouts/ProfileLayout';
-import ChatList from './pages/chats/ChatList';
-import ChatConversation from './pages/chats/ChatConversation';
-import ChatListLayout from './layouts/ChatListLayout';
-import ConversationLayout from './layouts/ConversationLayout';
+import ChatsLayout from './layouts/ChatsLayout';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 
 function App() {
@@ -43,15 +40,9 @@ function App() {
             <Route path="profile" element={<Profile />} />
           </Route>
 
-          <Route element={<ChatListLayout />}>
-            <Route path="chats" element={<ChatList />} />
-          </Route>
-
-          <Route element={<ConversationLayout />}>
-            <Route
-              path="chats/:conversationId"
-              element={<ChatConversation />}
-            />
+          <Route path="chats" element={<ChatsLayout />}>
+            <Route index element={<></>} />
+            <Route path=":conversationId" element={<></>} />
           </Route>
         </Route>
 

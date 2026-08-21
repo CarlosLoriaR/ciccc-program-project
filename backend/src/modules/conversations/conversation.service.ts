@@ -52,7 +52,14 @@ export async function getConversationById(conversationId: string, userId: string
   assertParticipant(conversation, userId);
 
   const match = await MatchModel.findById(conversation.match_id);
-  if (!match) throw new NotFoundError('Underlying match not found');
+  if (!match) {
+    // The match can be gone (cancelled/pruned) while the conversation and its
+    // messages still stand — that's fine, counterpart details are best-effort.
+    return {
+      conversation,
+      counterpart: { user: null, commute: null },
+    };
+  }
 
   const counterpartUserId = match.requester_id.toString() === userId ? match.addressee_id : match.requester_id;
   const counterpartCommuteId =

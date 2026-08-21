@@ -1,13 +1,15 @@
 import { IoSend } from 'react-icons/io5';
-import { useParams } from 'react-router';
 import { useAuth } from '../../context/auth/useAuth';
 import { useSocket } from '../../context/socket/useSocket';
 import { useEffect, useRef, useState } from 'react';
 import type { Message } from '../../types/chat';
 import { listMessages } from '../../lib/conversations';
 
-const ChatConversation = () => {
-  const { conversationId } = useParams();
+type ChatConversationProps = {
+  conversationId: string;
+};
+
+const ChatConversation = ({ conversationId }: ChatConversationProps) => {
   const { user } = useAuth();
   const { socket } = useSocket();
   const [messages, setMessages] = useState<Message[]>([]);
