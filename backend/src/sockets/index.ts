@@ -1,7 +1,7 @@
 import { Server as HttpServer } from 'http';
 import { Server, Socket } from 'socket.io';
 import { verifyAccessToken } from '../common/utils/jwt';
-import { env } from '../config/env';
+import { clientOrigins } from '../config/env';
 import { logger } from '../common/utils/logger';
 import { domainEvents } from '../common/events/eventBus';
 import { addSocket, removeSocket } from './presence';
@@ -21,7 +21,7 @@ async function joinOwnConversations(socket: Socket, userId: string): Promise<str
 
 export function initSockets(httpServer: HttpServer): Server {
   const io = new Server(httpServer, {
-    cors: { origin: env.CLIENT_ORIGIN, credentials: true },
+    cors: { origin: clientOrigins, credentials: true },
   });
 
   io.use((socket, next) => {

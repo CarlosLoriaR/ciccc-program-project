@@ -84,12 +84,20 @@ const Discover = () => {
           `You matched with ${current.user_id.display_name || current.user_id.full_name}! You can now chat.`,
         );
       } else {
-        await createMatch({
+        const match = await createMatch({
           addressee_id: current.user_id._id,
           requester_commute_id: myCommute._id,
           addressee_commute_id: current._id,
         });
-        toast.success('Connection request sent!');
+        if (match.status === 'accepted') {
+          // The other side already had a pending request in for us — the backend
+          // auto-accepted instead of filing a second, redundant one.
+          toast.success(
+            `You matched with ${current.user_id.display_name || current.user_id.full_name}! You can now chat.`,
+          );
+        } else {
+          toast.success('Connection request sent!');
+        }
       }
     } catch (error) {
       console.error(error);
