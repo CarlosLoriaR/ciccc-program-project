@@ -72,13 +72,12 @@ export async function discoverCommutes(requesterId: string, params: DiscoverPara
   }).select('requester_id addressee_id status');
 
   const excludedUserIds = new Set<string>([requesterId]);
-  // Someone who already sent ME a pending request should still show up in my own
-  // discover feed — otherwise neither side can ever see the other to act on it, since
-  // this swipe screen is the only place a match gets created or accepted. Hitting
-  // "Connect" on them there sends a request right back, which match.service.createMatch
-  // detects and auto-accepts (see the reverse-pending check there) rather than filing
-  // a second, opposite-direction match.
+  // Keep incoming pending requests visible — "Connect" on them gets auto-accepted
+  // (see the reverse-pending check in match.service.createMatch).
   for (const m of relatedMatches) {
+    // Cancelled/declined shouldn't permanently block rediscovering each other.
+    if (m.status === 'cancelled' || m.status === 'declined') continue;
+
     const iAmRequester = m.requester_id.toString() === requesterId;
     const otherUserId = iAmRequester ? m.addressee_id.toString() : m.requester_id.toString();
 
@@ -104,9 +103,7 @@ export async function discoverCommutes(requesterId: string, params: DiscoverPara
     CommuteModel.countDocuments(filter),
   ]);
 
-  // A commute can outlive its owning user if the user document was removed directly
-  // (e.g. manual DB edits) instead of through the app's own soft-delete flow — populate
-  // silently returns null for those, so drop them rather than hand a broken user to the client.
+  // Drop commutes whose owning user no longer exists (e.g. deleted directly in the DB).
   const items = rawItems.filter((item) => item.user_id != null);
 
   return toPagedResult(items, total, params);

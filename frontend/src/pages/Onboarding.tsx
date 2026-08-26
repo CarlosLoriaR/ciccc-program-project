@@ -56,8 +56,7 @@ const Onboarding = () => {
         origin: { type: 'Point', coordinates: origin.coordinates, label: origin.label },
         destination: { type: 'Point', coordinates: destination.coordinates, label: destination.label },
         departure_time: departureTime,
-        // Backend expects lowercase day codes ('mon', 'tue', ...); the UI keeps the
-        // capitalized labels ('Mon', 'Tue', ...) for display.
+        // Backend expects lowercase day codes; the UI keeps capitalized labels for display.
         days_of_week: weekDays.map((day) => day.toLowerCase()),
         modes: transportModes.map((mode) => mode.toLowerCase()),
       });

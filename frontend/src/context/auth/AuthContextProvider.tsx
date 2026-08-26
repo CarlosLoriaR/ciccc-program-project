@@ -9,8 +9,7 @@ import toast from 'react-hot-toast';
 const AuthContextProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(localStorage.getItem('token'));
-  // Only start "loading" if there's a token to actually validate — avoids an
-  // unnecessary setState-in-effect for the logged-out case.
+  // Only "loading" if there's a token to actually validate.
   const [isLoading, setIsLoading] = useState<boolean>(() => !!localStorage.getItem('token'));
 
   useEffect(() => {

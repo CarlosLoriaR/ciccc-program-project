@@ -1,9 +1,8 @@
 import type { User } from '../types/user';
 import type { Commute } from '../types/commute';
-import { FiMapPin, FiStar, FiX } from 'react-icons/fi';
+import { FiMapPin, FiX } from 'react-icons/fi';
 import { FaRegCircle } from 'react-icons/fa6';
 import { LuMessageCircleMore } from 'react-icons/lu';
-import { IoCarSport } from 'react-icons/io5';
 import { useState } from 'react';
 import { formatTime } from '../utils/formatTime';
 import { shortenLocationLabel } from '../utils/formatLocation';
@@ -27,7 +26,6 @@ const ProfileCard = ({
   onConnect,
 }: ProfileCardProps) => {
   const photos = [user.avatar_url, ...(user.photos ?? [])].filter(Boolean);
-  console.log('photos array', photos);
   const [photoIndex, setPhotoIndex] = useState(0);
 
   const goNext = () => {
@@ -87,9 +85,6 @@ const ProfileCard = ({
         <div className="absolute inset-0 bg-linear-to-t from-black/70 via-black/10 to-transparent" />
         <div className="absolute bottom-0 left-0 p-4 text-white">
           <h2 className="text-2xl font-bold">{user.display_name}</h2>
-          {user.rating_avg >= 4.5 && (
-            <span className="text-sm">✓ Top Commuter</span>
-          )}
         </div>
       </div>
 
@@ -152,20 +147,6 @@ const ProfileCard = ({
           ))}
         </div>
       )}
-
-      {/* Stats */}
-      <div className="mx-5 pt-4 border-t border-outline-variant flex justify-between items-center">
-        {user.total_rides !== undefined && (
-          <span className="flex items-center gap-2 text-primary font-semibold">
-            <IoCarSport size={20} />
-            {user.total_rides} Rides
-          </span>
-        )}
-        <span className="flex items-center gap-2 text-primary font-semibold">
-          <FiStar size={18} className="fill-primary" />
-          {user.rating_avg} Rating
-        </span>
-      </div>
 
       {/* Btn Actions */}
       <div className="p-4 flex gap-3 md:gap-20 justify-center">

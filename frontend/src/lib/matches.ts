@@ -28,8 +28,7 @@ type MatchParticipant = {
   avatar_url?: string;
 };
 
-// GET /matches populates requester_id/addressee_id with basic profile fields —
-// a different shape than the plain-id Match returned by POST /matches above.
+// GET /matches populates requester_id/addressee_id, unlike POST /matches above.
 export type PopulatedMatch = Omit<Match, 'requester_id' | 'addressee_id'> & {
   requester_id: MatchParticipant;
   addressee_id: MatchParticipant;
@@ -51,8 +50,7 @@ export const respondToMatch = async (
   return res.data;
 };
 
-// Works for withdrawing a pending request you sent, or unmatching an existing
-// connection — either participant can call this either way.
+// Withdraws a pending request, or unmatches an existing connection.
 export const cancelMatch = async (matchId: string): Promise<void> => {
   await api.delete(`/matches/${matchId}`);
 };

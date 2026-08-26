@@ -13,10 +13,7 @@ export async function createConversationForMatch(match: IMatch): Promise<IConver
   });
 }
 
-// participant_ids is typed as ObjectId[], but after .populate() each entry is actually a
-// full user document at runtime (TS doesn't track that shape change) — a populated
-// document's .toString() returns "[object Object]", not its id, so comparing it directly
-// against a plain id string always fails. Read ._id off populated entries when present.
+// After .populate(), entries are full user docs at runtime — read ._id, not .toString().
 function participantId(entry: IConversation['participant_ids'][number]): string {
   const populated = entry as unknown as { _id?: { toString(): string } };
   return (populated._id ?? entry).toString();
@@ -53,8 +50,7 @@ export async function getConversationById(conversationId: string, userId: string
 
   const match = await MatchModel.findById(conversation.match_id);
   if (!match) {
-    // The match can be gone (cancelled/pruned) while the conversation and its
-    // messages still stand — that's fine, counterpart details are best-effort.
+    // Match can be gone while the conversation stands — counterpart is best-effort.
     return {
       conversation,
       counterpart: { user: null, commute: null },

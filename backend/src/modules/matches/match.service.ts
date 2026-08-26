@@ -35,11 +35,8 @@ export async function createMatch(requesterId: string, input: CreateMatchInput):
     throw new BadRequestError('addressee_commute_id must belong to the addressee');
   }
 
-  // The other person may have already sent US a pending request — e.g. both people had
-  // Discover open and swiped "Connect" on each other around the same time, before either
-  // side's app knew about the other's request. Rather than filing a second, opposite-
-  // direction match (which the compound unique index wouldn't even catch, since requester/
-  // addressee are swapped), treat this as accepting theirs.
+  // If they already sent US a pending request, accept theirs instead of filing a
+  // second, opposite-direction match.
   const reversePending = await MatchModel.findOne({
     requester_id: input.addressee_id,
     addressee_id: requesterId,
@@ -55,7 +52,22 @@ export async function createMatch(requesterId: string, input: CreateMatchInput):
     requester_commute_id: input.requester_commute_id,
     addressee_commute_id: input.addressee_commute_id,
   });
-  if (existing) throw new ConflictError('A connection request already exists for these commutes');
+  if (existing) {
+    if (existing.status === 'pending' || existing.status === 'accepted') {
+      throw new ConflictError('A connection request already exists for these commutes');
+    }
+    // A cancelled/declined match already occupies this unique (requester, addressee,
+    // commute pair) slot — revive it instead of inserting a new one.
+    existing.status = 'pending';
+    existing.matched_at = undefined;
+    await existing.save();
+
+    await notify(input.addressee_id, 'match_request', 'New connection request', 'Someone wants to connect on your commute', {
+      matchId: existing._id.toString(),
+    });
+
+    return existing;
+  }
 
   const match = await MatchModel.create({
     requester_id: requesterId,
@@ -114,9 +126,7 @@ export async function respondToMatch(matchId: string, userId: string, input: Res
   return match;
 }
 
-// Covers two different actions under one name: withdrawing your own pending request,
-// and unmatching someone you're already connected with — either participant can do
-// either, since both are just "I no longer want this connection to exist."
+// Covers both withdrawing your own pending request and unmatching an accepted one.
 export async function cancelMatch(matchId: string, userId: string): Promise<void> {
   const match = await findParticipantMatch(matchId, userId);
   if (match.status !== 'pending' && match.status !== 'accepted') {

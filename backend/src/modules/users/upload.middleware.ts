@@ -1,9 +1,7 @@
 import multer from 'multer';
 import { BadRequestError } from '../../common/errors/httpErrors';
 
-// Images are stored as base64 inside the User document itself (see user.controller.ts) —
-// no disk storage, no external bucket/account needed. Keeping the size limit modest keeps
-// documents small and requests reasonably fast.
+// Stored as base64 inside the User document — no disk storage, no external bucket.
 const MAX_FILE_SIZE_BYTES = 2 * 1024 * 1024;
 
 export const uploadImage = multer({

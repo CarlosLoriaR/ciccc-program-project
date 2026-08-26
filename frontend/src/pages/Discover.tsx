@@ -11,9 +11,7 @@ import {
 } from '../lib/commutes';
 import { createMatch, respondToMatch } from '../lib/matches';
 
-// The discover endpoint only returns a subset of the other user's profile
-// (name, avatar, bio, interests, rating). ProfileCard only reads those fields,
-// so the rest of the User shape is filled with harmless placeholders.
+// Discover only returns a subset of the profile — fill the rest with placeholders.
 function toCardUser(candidate: DiscoverCandidate): User {
   const partial = candidate.user_id;
   return {
@@ -77,8 +75,7 @@ const Discover = () => {
     setIsConnecting(true);
     try {
       if (current.pending_match_id) {
-        // They already requested us — "Connect" here accepts it instead of filing a
-        // second, duplicate request (which the backend would reject anyway).
+        // They already requested us — accept instead of filing a duplicate request.
         await respondToMatch(current.pending_match_id, 'accept');
         toast.success(
           `You matched with ${current.user_id.display_name || current.user_id.full_name}! You can now chat.`,
@@ -90,8 +87,7 @@ const Discover = () => {
           addressee_commute_id: current._id,
         });
         if (match.status === 'accepted') {
-          // The other side already had a pending request in for us — the backend
-          // auto-accepted instead of filing a second, redundant one.
+          // Backend auto-accepted a reverse-pending request instead of filing a new one.
           toast.success(
             `You matched with ${current.user_id.display_name || current.user_id.full_name}! You can now chat.`,
           );

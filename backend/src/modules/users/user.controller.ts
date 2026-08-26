@@ -30,8 +30,7 @@ export const getById = asyncHandler(async (req: Request, res: Response) => {
   ok(res, toPublicUser(user));
 });
 
-// Returns a persistent data: URI for the uploaded image — the caller then saves it via
-// PATCH /users/me (avatar_url) or in a commute/profile field, same as any other string URL.
+// Returns a persistent data: URI for the uploaded image.
 export const uploadPhoto = asyncHandler(async (req: Request, res: Response) => {
   if (!req.file) throw new BadRequestError('No file uploaded');
   const dataUri = `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}`;

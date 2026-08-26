@@ -22,6 +22,5 @@ if (!parsed.success) {
 export const env = parsed.data;
 export const isProduction = env.NODE_ENV === 'production';
 
-// CLIENT_ORIGIN can list more than one origin, comma-separated — useful locally when
-// bouncing between `vite dev` (5173) and `vite preview` (4173, needed to test the PWA).
+// CLIENT_ORIGIN can list more than one origin, comma-separated.
 export const clientOrigins = env.CLIENT_ORIGIN.split(',').map((origin) => origin.trim());

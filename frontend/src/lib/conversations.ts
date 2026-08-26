@@ -16,16 +16,6 @@ export type ConversationSummary = {
   lastMessage: { body: string; sender_id: string; created_at: string } | null;
 };
 
-// export const conversationList = async (): Promise<
-//   {
-//     conversation: Conversation;
-//     lastMessage: Message | null;
-//   }[]
-// > => {
-//   const res = await api.get('/conversations');
-//   return res.data;
-// };
-
 export type ConversationDetail = {
   conversation: {
     _id: string;

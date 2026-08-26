@@ -10,8 +10,7 @@ export const geoPointSchema = z.object({
 export const updateProfileSchema = z.object({
   full_name: z.string().trim().min(1).optional(),
   display_name: z.string().trim().min(1).optional(),
-  // Plain string, not .url() — the frontend currently uploads via local blob: preview URLs
-  // (no cloud storage wired up yet), which aren't standard http(s) URLs.
+  // Plain string, not .url() — holds a data: URI, not a standard http(s) URL.
   avatar_url: z.string().optional(),
   phone: z.string().trim().optional(),
   bio: z.string().trim().max(300).optional(),

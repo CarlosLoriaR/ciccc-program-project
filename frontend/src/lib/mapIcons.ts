@@ -1,7 +1,6 @@
 import L from 'leaflet';
 
-// A circular badge with a person silhouette — reads more clearly as "a person" on the
-// map than a generic teardrop map-pin shape does at this size.
+// Circular badge with a person silhouette, clearer than a teardrop map-pin at this size.
 function personIcon(color: string, size = 36): L.DivIcon {
   const glyphSize = Math.round(size * 0.55);
   return L.divIcon({

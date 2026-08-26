@@ -1,8 +1,6 @@
 import api from './api';
 
-// Uploads an image and gets back a persistent URL (stored server-side as base64, not tied
-// to this browser tab) — replaces the old URL.createObjectURL() blob: URLs, which only ever
-// worked for the current session and explain why photos "disappeared" for everyone else.
+// Persistent server-side URL, not a local blob: URL — those only worked for the uploading tab.
 export const uploadImage = async (file: File): Promise<string> => {
   const formData = new FormData();
   formData.append('file', file);

@@ -29,8 +29,7 @@ export const getCommuteById = async (id: string): Promise<Commute> => {
 
 export type DiscoverCandidate = Omit<Commute, 'user_id'> & {
   user_id: User;
-  // Set when this candidate already sent ME a pending request — hitting "Connect" on
-  // them should accept that request instead of filing a duplicate new one.
+  // Set when this candidate already sent ME a pending request.
   pending_match_id: string | null;
 };
 
