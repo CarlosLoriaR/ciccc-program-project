@@ -1,0 +1,18 @@
+export const INTEREST_OPTIONS = [
+  'Coding',
+  'Music',
+  'Movies',
+  'Sports',
+  'Books',
+  'Gaming',
+  'Cooking',
+  'Travel',
+  'Photography',
+  'Fitness',
+  'Art',
+  'Science',
+  'Podcasts',
+  'Fashion',
+  'Pets',
+  'Nature',
+];
